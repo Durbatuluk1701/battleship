@@ -1,5 +1,5 @@
-import Tile
-import Ship
+from Tile import Tile
+from Ship import Ship
 
 class Board:
     __tileArray__ = [[]]
@@ -17,20 +17,32 @@ class Board:
             if ((ship.getHealth - yCoord) < 0):
                 return False
             for y in range(ship.getHealth):
+                if (self.__tileArray__[yCoord - y][xCoord].getItem() != "water"):
+                    return False
+            for y in range(ship.getHealth):
                 self.__tileArray__[yCoord - y][xCoord].setTileItem(ship.getName)
         if (direction == "down"):
             if ((ship.getHealth + yCoord) > 8):
                 return False
             for y in range(ship.getHealth):
+                if (self.__tileArray__[yCoord + y][xCoord].getItem() != "water"):
+                    return False
+            for y in range(ship.getHealth):
                 self.__tileArray__[yCoord + y][xCoord].setTileItem(ship.getName)
         if (direction == "left"):
             if ((ship.getHealth - xCoord) > 0):
                 return False
+            for y in range(ship.getHealth):
+                if (self.__tileArray__[yCoord][xCoord - x].getItem() != "water"):
+                    return False
             for x in range(ship.getHealth):
                 self.__tileArray__[yCoord][xCoord - x].setTileItem(ship.getName)
         if (direction == "down"):
             if ((ship.getHealth + xCoord) > 8):
                 return False
+            for y in range(ship.getHealth):
+                if (self.__tileArray__[yCoord][xCoord + x].getItem() != "water"):
+                    return False
             for x in range(ship.getHealth):
                 self.__tileArray__[yCoord][xCoord + x].setTileItem(ship.getName)
         return True
@@ -39,13 +51,12 @@ class Board:
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0):
             raise Exception("Error Invalid X or Y bound to attack a tile")
         if self.__tileArray__[yCoord][xCoord].getTileAttacked():
-            return "Hit Again"
+            return False
         self.__tileArray__[yCoord][xCoord].setTileAttacked()
-        return self.__tileArray__.getName()
-        
-    
-    def getBoard(self):
-        return self.__tileArray__
+        return True
+
+    def getTile(self, xCoord, yCoord):
+        return self.__tileArray__[yCoord][xCoord]
 
 
 
