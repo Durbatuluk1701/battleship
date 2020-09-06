@@ -1,4 +1,4 @@
-class tile:
+class Tile:
     def __init__(self): # initializes the tile object to be water and not attacked by default
         self.tileItem = "water" # tileItem is a string
         self.attacked = False # attacked is a bool

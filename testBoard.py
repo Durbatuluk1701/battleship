@@ -2,6 +2,8 @@ from Ship import Ship
 from Board import Board
 from Tile import Tile
 
+
+
 board = Board()
 fleet = [Ship("carrier", 5), Ship("battleship", 4), Ship("destroyer", 3), Ship("gunboat", 2), Ship("dinghy", 1)]
 
@@ -51,10 +53,13 @@ if not (board.placeShip("right", fleet[1], 7, 7)):
 else:
     print("Invalid Placement right: Failed")
 
+
+
+
 placement = True
-if (board.placeShip("Down", fleet[1], 1, 1)):
-    for x in range(fleet[1].getHealth):
-        if not (board.getTile(1, 1 + x).getName() == fleet[1].getName()):
+if (board.placeShip("right", fleet[1], 2, 3)):
+    for y in range(fleet[1].getHealth()):
+        if (board.getTile(1, 1 + y).getTileItem() != fleet[1].getName()):
             placement = False
 else:
     placement = False
@@ -63,36 +68,49 @@ if placement:
 else:
     print("Placement Test Down: Failed")
 
-if not (board.placeShip("right", fleet[2], 0, 2)):
+print(board.getTile(1,4).getTileItem())
+
+
+
+
+if not (board.placeShip("up", fleet[2], 3, 4)):
     print("Placement Test Collision: Passed")
 else:
     print("Placement Test Collision: Failed")
 
-for x in range(9):
+
+
+
+for y in range(9):
     printCheck = ""
-    for y in range(9):
-        printCheck += board.getTile(x, y).getItem()[0] + " "
+    for x in range(9):
+        printCheck += board.getTile(x, y).getTileItem()[0] + " "
     print(printCheck)
+print("")
 
-for x in range(9):
+for y in range(9):
     printCheck = ""
-    for y in range(9):
-        printCheck += board.getTile(x, y).getAttacked() + " "
+    for x in range(9):
+        printCheck += str(board.getTile(x, y).getTileAttacked())[0] + " "
     print(printCheck)
+print("")
 
-x = 1
-y = 1
-for r in range(len(fleet)):
-    if (fleet[r].getName() == board.getTile(x, y).getItem()):
-        if (board.attackTile(x,y)):
-            fleet[r].damageShip()
-    board.attackTile(1,1)
+x = 2
+y = 3
+if(board.getTile(x, y).getTileItem() != "water"):
+    for r in range(len(fleet)):
+        if (fleet[r].getName() == board.getTile(x, y).getTileItem()):
+            if (board.attackTile(x,y)):
+                fleet[r].damageShip()
+else:
+    board.attackTile(x,y)
 
-for x in range(9):
+
+for y in range(9):
     printCheck = ""
-    for y in range(9):
-        printCheck += board.getTile(x, y).getAttacked() + " "
+    for x in range(9):
+        printCheck += str(board.getTile(x, y).getTileAttacked())[0] + " "
     print(printCheck)
 
 for boat in fleet:
-    print(boat.getName() + " " + boat.getHealth())
+    print(boat.getName() + " " + str(boat.getHealth()))
