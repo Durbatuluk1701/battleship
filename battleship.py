@@ -4,24 +4,15 @@ import random
 from abc import ABC
 
 
-# Testing some things out
-
-# Game flow test
-
-# controls the overall flow of the game
 class GameFlow:
-    def play(self):
-        print("Welcome to battleship")
 
-# controls the display
-# class Display:
-
-# creates ship objects that store data about the ships
-# class Ship:
+    def __init__(self, display, size = 10):
+        self.display = display
+        self.boardSize = size
 
 
-# class Board(ABC):
-
-# class Player(Board):
-
-# class Computer(Board):
+gameBeingPlayed = True
+while gameBeingPlayed:
+    d = Display() #initializes the display
+    game = GameFlow(d) #initializes the GameFlow
+    game.play() #calls GameFlow's Play function
