@@ -1,3 +1,6 @@
+import random
+from Board import Board
+from Ship import Ship
 class Computer:
     def __init__(self):
         self.board = Board
@@ -10,13 +13,13 @@ class Computer:
         while shipPlaced == False:
             x = random.randint(0,9)
             y = random.randint(0,9)
-            if (self.board.placeShip("up", ship, x, y)):
+            if (self.board.placeShip(self, "up", ship, x, y)):
                 shipPlaced == True
-            elif (self.board.placeShip("down", ship, x, y)):
+            elif (self.board.placeShip(self, "down", ship, x, y)):
                 shipPlaced == True
-            elif (self.board.placeShip("left", ship, x, y)):
+            elif (self.board.placeShip(self, "left", ship, x, y)):
                 shipPlaced == True
-            elif (self.board.placeShip("right", ship, x, y)):
+            elif (self.board.placeShip(self, "right", ship, x, y)):
                 shipPlaced == True
             else:
                 pass
@@ -25,3 +28,4 @@ class Computer:
         # if it has, check the adjacent tiles until it fully sinks the ship
         # if it hasn't hit something before, generate random x,y coordinates
         # attack those coords
+        print ("This is a placeholder for Dawson's code. :)")
