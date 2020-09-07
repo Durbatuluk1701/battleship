@@ -1,9 +1,10 @@
 import random
 from Board import Board
 from Ship import Ship
+from Tile import Tile
 class Computer:
     def __init__(self):
-        self.board = Board
+        self.__board__ = Board
     def shipPlace(self, ship): 
         # generate random x,y coordinates
         # check if it can place the ship without going out of bounds
@@ -11,15 +12,15 @@ class Computer:
         # if not, generate another set of coordinates (not the same) and try again until it can place ship
         shipPlaced = False
         while shipPlaced == False:
-            x = random.randint(0,9)
-            y = random.randint(0,9)
-            if (self.board.placeShip(self, "up", ship, x, y)):
+            xValue = random.randint(0,9)
+            yValue = random.randint(0,9)
+            if (self.__board__.placeShip(self, "up", ship, xValue, yValue)):
                 shipPlaced == True
-            elif (self.board.placeShip(self, "down", ship, x, y)):
+            elif (self.__board__.placeShip(self, "down", ship, xValue, yValue)):
                 shipPlaced == True
-            elif (self.board.placeShip(self, "left", ship, x, y)):
+            elif (self.__board__.placeShip(self, "left", ship, xValue, yValue)):
                 shipPlaced == True
-            elif (self.board.placeShip(self, "right", ship, x, y)):
+            elif (self.__board__.placeShip(self, "right", ship, xValue, yValue)):
                 shipPlaced == True
             else:
                 pass
