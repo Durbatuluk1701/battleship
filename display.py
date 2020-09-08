@@ -12,19 +12,19 @@ class Display:
     "text" : pygame.color.Color(255,255,255)
     }
 
-    def __init__ (self, board_size = 10, cell_size = 20, margin = 10): #constructor of the display, dimensions
+    def __init__ (self, board_size = 20, cell_size = 20, margin = 10): #constructor of the display, dimensions
         self.board_size = board_size
         self.cell_size = cell_size
         self.margin = margin
+        #self.fill = (255,0,0)
         pygame.init()
         pygame.font.init()
         self.font = pygame.font.SysFont("ComicSans",15) # sets font
-        screen_width = self.cell_size * board_size + 2 * margin
-        screen_height = 2 * self.cell_size *board_size + 3 * margin
+        screen_width = self.cell_size * board_size + 2 * margin # sets width
+        screen_height = 2 * self.cell_size *board_size + 3 * margin #sets heigth
         self.screen = pygame.display.set_mode([screen_width, screen_height])
         pygame.display.set_caption("Battleship!") #name of window
         clock = pygame.time.Clock()
-        return screen, clock, display
 
     def input (self,running = True): # user interaction with the display
         for event in pygame.event.get():
@@ -39,11 +39,7 @@ class Display:
                     return x, y
         return None, None
 
-
-pygame.init()
-pygame.display.set_caption("Battleship!") # name of window
-window_size = [600,600]
-screen = pygame.display.set_mode(window_size)
+mygame = Display()
 running = True
 while running:
     pygame.display.flip() # updates the visuals on the board
