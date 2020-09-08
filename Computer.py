@@ -14,19 +14,24 @@ class Computer:
         while shipPlaced == False:
             xValue = random.randint(0,9)
             yValue = random.randint(0,9)
-            if (self.__board__.placeShip(self, "up", ship, xValue, yValue)):
-                shipPlaced == True
-            elif (self.__board__.placeShip(self, "down", ship, xValue, yValue)):
-                shipPlaced == True
-            elif (self.__board__.placeShip(self, "left", ship, xValue, yValue)):
-                shipPlaced == True
-            elif (self.__board__.placeShip(self, "right", ship, xValue, yValue)):
-                shipPlaced == True
+            if self.__board__.placeShip(self, "up", ship, xValue, yValue):
+                shipPlaced = True
+            elif self.__board__.placeShip(self, "down", ship, xValue, yValue):
+                shipPlaced = True
+            elif self.__board__.placeShip(self, "left", ship, xValue, yValue):
+                shipPlaced = True
+            elif self.__board__.placeShip(self, "right", ship, xValue, yValue):
+                shipPlaced = True
             else:
                 pass
     def shipGuess(self):
-        # check if it has hit a ship before
-        # if it has, check the adjacent tiles until it fully sinks the ship
-        # if it hasn't hit something before, generate random x,y coordinates
-        # attack those coords
-        print ("This is a placeholder for Dawson's code. :)")
+        # generate random x,y coordinates
+        # attack those coords, if possible
+        openTile = False
+        while(openTile == False):
+            col = random.randint(0,9)
+            row = random.randint(0,9)
+            if self.__board__.attackTile(self, col,row):
+                openTile = True
+            else:
+                openTile = False
