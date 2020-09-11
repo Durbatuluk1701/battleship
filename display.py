@@ -44,21 +44,38 @@ class Display:
     def visual(self):
         white = (255,255,255)
         red = (255,14,14)
+        ocean = (52,196,206)
         blockSize = 40
+        done = False
+        gridtop = []
         for y in range(9):
+            gridtop.append([])
             for x in range(9): # this is the top grid
-                if x == 5 and y == 5: # this changes the color of the coordinates to red
-                    square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
-                    pygame.draw.rect(mygame.screen, red, square, 0)
-                else:
-                    square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
-                    pygame.draw.rect(mygame.screen, white, square, 1)
+                    rect = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
+                    #pygame.draw.rect(self.screen, white, rect, 1)
+                    gridtop[y].append([rect])
 
+        for event in pygame.event.get():
+            if event.type ==pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                x = pos[0] // (self.screen_width + self.margin)
+                y = pos[1] // (self.screen_height + self.margin)
+                gridtop[y][x] = 1 # this indicates a pressed/hit square
+
+        for y in range (9):
+            for x in range(9):
+                color = ocean
+                if gridtop[y][x] == 1:
+                    color = red
+                pygame.draw.rect(mygame.screen, color, rect, 1)
+
+#---------------------------------- BOTTOM GRID --------------------------------------------#
         buffer = self.margin / 30 + self.board_size * self.cell_size
         for y in range(9): # this is the bottom grid
             for x in range(9):
                 square = pygame.Rect(50 + x*blockSize, y*blockSize + buffer, blockSize, blockSize)
                 pygame.draw.rect(self.screen, (255, 255, 255, 255), square, 1)
+#------------------------------------- END OF VISUAL ---------------------------------------#
 
     def fillCoordinates(self):
         xCoordinates = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
@@ -109,6 +126,7 @@ class Display:
 mygame = Display()
 mygame.visual()
 mygame.fillCoordinates()
+mygame.input()
 running = True
 while running:
     pygame.display.flip() # updates the visuals on the board
