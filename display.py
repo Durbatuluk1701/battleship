@@ -26,12 +26,7 @@ class Display:
         self.screen.fill((0,0,0))
         pygame.display.set_caption("Battleship!") #name of window
         clock = pygame.time.Clock()
-        grid = []
-        for row in range(21):
-            grid.append([])
-            for column in range(19):
-                grid[row].append(0)
-        self.grid = grid
+
 
     def input (self,running = True): # user interaction with the display
         for event in pygame.event.get():
@@ -52,22 +47,63 @@ class Display:
                 square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
                 pygame.draw.rect(mygame.screen, white, square, 1)
 
-        buffer = self.margin / 30 + self.board_size * self.cell_size # 30 + 25 * 15
+        buffer = self.margin / 30 + self.board_size * self.cell_size
         for y in range(9): # this is the bottom grid
             for x in range(9):
                 square = pygame.Rect(50 + x*blockSize, y*blockSize + buffer, blockSize, blockSize)
                 pygame.draw.rect(self.screen, (255, 255, 255, 255), square, 1)
-        #for row in range(20): #player grid being drawn
-            #for column in range(9):
-                #if self.grid[row][column] == 1:
-                    #color = red
-            #    pygame.draw.rect(mygame.screen,color,[(self.margin + self.screen_width) * column + self.margin,(self.margin + self.screen_height) * row + self.margin, self.screen_width, self.screen_height] )
 
+    def fillCoordinates(self):
+        xCoordinates = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+        yCoordinates = ['9','8','7','6','5','4','3','2', '1']
+        bottom = 75
+        left = 55
+
+        black = (0,0,0)
+        white = (255, 255, 255)
+        font = pygame.font.Font('freesansbold.ttf', 20)
+
+        #for top board Y coordinates
+        for y in range(9):
+            text = font.render(yCoordinates[y], True, white, black)
+            textRect = text.get_rect()
+            textRect.bottom = bottom
+            textRect.right = 30 # x axis of label
+            self.screen.blit(text, textRect)
+            bottom = bottom + 40 # y axis of label
+        #for top board X coordinates
+        for x in range(9):
+            text = font.render(xCoordinates[x], True, white, black)
+            textRect = text.get_rect()
+            textRect.top = 405 # y axis of label
+            textRect.left = left
+            self.screen.blit(text, textRect)
+            left = left + 42 # x axis of label
+
+        #for bot board Y coordinates
+        for y in range(9):
+            text = font.render(yCoordinates[y], True, white, black)
+            textRect = text.get_rect()
+            textRect.bottom = bottom + 100 # y axis of label
+            textRect.right = 30
+            self.screen.blit(text, textRect)
+            bottom = bottom + 40
+
+        left = 55 #reset left coordinate
+        # for bot board X coordinates
+        for x in range(9):
+            text = font.render(xCoordinates[x], True, white, black)
+            textRect = text.get_rect()
+            textRect.top = 865
+            textRect.left = left
+            self.screen.blit(text, textRect)
+            left = left + 42
 
 
 
 mygame = Display()
 mygame.visual()
+mygame.fillCoordinates()
 running = True
 while running:
     pygame.display.flip() # updates the visuals on the board
