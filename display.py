@@ -33,10 +33,13 @@ class Display:
             if event.type == pygame.QUIT: #user wnats to quit the game
                 Display.close()
             elif event.type == pygame.MOUSEBUTTONDOWN: # when user mouse buttons down
-                pos = pygame.mouse.get_pos()
-                column = pos[0] // (width + margin)
-                row = pos[1] // (height + margin)
-                self.grid[row][column] = 1 #this indicates a pressed/hit square
+                xcoord, ycoord = pygame.mouse.get_pos()
+                ycoord = ycoord % (self.board_size * self.cell_size + self.margin)
+                xcoord = (xcoord - self.margin) // self.cell_size
+                ycoord = (ycoord - self.margin) // self.cell_size
+                if x in range(self.board_size) and y in range(self.board_size):
+                    return xcoord, ycoord
+        return None, None
 
     def visual(self):
         white = (255,255,255)
@@ -44,8 +47,12 @@ class Display:
         blockSize = 40
         for y in range(9):
             for x in range(9): # this is the top grid
-                square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
-                pygame.draw.rect(mygame.screen, white, square, 1)
+                if x == 5 and y == 5: # this changes the color of the coordinates to red
+                    square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
+                    pygame.draw.rect(mygame.screen, red, square, 0)
+                else:
+                    square = pygame.Rect(50 + x*blockSize, y*blockSize + 40, blockSize, blockSize)
+                    pygame.draw.rect(mygame.screen, white, square, 1)
 
         buffer = self.margin / 30 + self.board_size * self.cell_size
         for y in range(9): # this is the bottom grid
@@ -58,11 +65,9 @@ class Display:
         yCoordinates = ['9','8','7','6','5','4','3','2', '1']
         bottom = 75
         left = 55
-
         black = (0,0,0)
         white = (255, 255, 255)
         font = pygame.font.Font('freesansbold.ttf', 20)
-
         #for top board Y coordinates
         for y in range(9):
             text = font.render(yCoordinates[y], True, white, black)
@@ -70,7 +75,7 @@ class Display:
             textRect.bottom = bottom
             textRect.right = 30 # x axis of label
             self.screen.blit(text, textRect)
-            bottom = bottom + 40 # y axis of label
+            bottom = bottom + 40 # distance between characters
         #for top board X coordinates
         for x in range(9):
             text = font.render(xCoordinates[x], True, white, black)
@@ -78,7 +83,7 @@ class Display:
             textRect.top = 405 # y axis of label
             textRect.left = left
             self.screen.blit(text, textRect)
-            left = left + 42 # x axis of label
+            left = left + 41 # distance between characters
 
         #for bot board Y coordinates
         for y in range(9):
@@ -87,17 +92,17 @@ class Display:
             textRect.bottom = bottom + 100 # y axis of label
             textRect.right = 30
             self.screen.blit(text, textRect)
-            bottom = bottom + 40
+            bottom = bottom + 40 # distance between characters
 
         left = 55 #reset left coordinate
         # for bot board X coordinates
         for x in range(9):
             text = font.render(xCoordinates[x], True, white, black)
             textRect = text.get_rect()
-            textRect.top = 865
+            textRect.top = 865 # x axis of labels
             textRect.left = left
             self.screen.blit(text, textRect)
-            left = left + 42
+            left = left + 41 # distance between characters
 
 
 
