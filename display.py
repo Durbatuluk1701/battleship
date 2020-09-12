@@ -151,6 +151,22 @@ class Display:
             frame.blit(text, textRect)
             left = left + 41 # distance between characters
 
+    def result(self, winner):
+        black = (0,0,0)
+        red = (255, 0, 0)
+        font = pygame.font.Font('freesansbold.ttf', 50)
+        if winner == True:
+            text = font.render('You Win!', True, black, red)
+            textRect = text.get_rect()
+            textRect.center = (self.boardWidth // 2, self.boardHeight // 2)
+            self.screen.blit(text, textRect)
+        else:
+            text = font.render('You Lose!', True, black, red)
+            textRect = text.get_rect()
+            textRect.center = (self.boardWidth // 2, self.boardHeight // 2)
+            self.screen.blit(text, textRect)
+
 mygame = Display()
+mygame.result(True)
 mygame.graphs()
 pygame.quit()
