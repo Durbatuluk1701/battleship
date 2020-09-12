@@ -2,13 +2,8 @@ import random
 from Board import Board
 from Ship import Ship
 from Tile import Tile
-"""
-Computer Class
-This class serves as the 2nd Player in the Battleship game.
-The Computer class has its own Board object and methods to
-place its own ships, and attack the opposing Player.
-"""
 class Computer:
+    def __init__(self):
     """
     Default Constructor
     Parameters: n/a
@@ -16,8 +11,8 @@ class Computer:
     Preconditions: n/a
     Postconditions: A Computer object is created with a default Board object within it.
     """
-    def __init__(self):
         self.__board__ = Board()
+    def getBoard(self):
     """
     Get Board Method
     Parameters: n/a
@@ -25,8 +20,8 @@ class Computer:
     Preconditions: The Board of the Computer is created.
     Postconditions: n/a
     """
-    def getBoard(self):
         return(self.__board__)
+    def shipPlace(self, ship): 
     """
     Ship Place Method
     Parameters: A Ship object is passed in to the method.
@@ -34,7 +29,6 @@ class Computer:
     Preconditions: A Board object is created and valid Ship object is passed in.
     Postconditions: The Computer places the Ship that is passed in onto its Board.
     """
-    def shipPlace(self, ship): 
         # generate random x,y coordinates
         # check if it can place the ship without going out of bounds
         # if it can, it will place the ship
@@ -53,6 +47,7 @@ class Computer:
                 shipPlaced = True
             else:
                 pass
+    def attackTile(self, xCoord, yCoord):
     """
     Attack Tile Method
     Parameters: An x coordinate and a y coordinate (both ints) for the Board.
@@ -60,8 +55,8 @@ class Computer:
     Preconditions: A Board object is created and valid coordinates are passed in.
     Postconditions: The Tile of the Board at the specified coordinates is attacked, if possible.
     """
-    def attackTile(self, xCoord, yCoord):
         return(self.__board__.attackTile(xCoord, yCoord))
+    def shipGuess(self):
     """
     Ship Guess Method
     Parameters: n/a
@@ -69,7 +64,6 @@ class Computer:
     Preconditions: A Board object is created.
     Postconditions: The Computer attacks the Tile at the randomly generated coordinates.
     """
-    def shipGuess(self):
         # generate random x,y coordinates
         # attack those coords, if possible
         openTile = False
