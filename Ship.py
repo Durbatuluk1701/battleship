@@ -1,5 +1,6 @@
 
-'''Class: Ship'''
+'''Class: Ship
+    The Ship class is used to hold and do any actions that have to deal with ships in the battleship game.'''
 
 '''Private Member Varibles:
     __shipName__ : holds name for ship object.
