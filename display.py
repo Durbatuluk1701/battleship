@@ -16,7 +16,7 @@ class Display:
         self.board_size = board_size
         self.cell_size = cell_size
         self.margin = margin
-        #self.fill = (255,0,0)
+        self.fill = (0,255,0)
         pygame.init()
         pygame.font.init()
         self.font = pygame.font.SysFont("ComicSans",15) # sets font
@@ -42,9 +42,9 @@ class Display:
 mygame = Display()
 running = True
 while running:
-    pygame.display.flip() # updates the visuals on the board
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False # the user wants to quit the game
+    pygame.display.flip() # updates the visuals on the board
 
 pygame.quit()
