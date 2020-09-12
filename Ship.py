@@ -13,7 +13,7 @@ class Ship:
     __shipLength__ = 0
     __shipSpots__ = []
     
-    '''Initilaizer:
+    '''Default Constructor:
         Parameters : n/a
         Return: n/a
         Preconditions: Need to create a ship object.
