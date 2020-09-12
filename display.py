@@ -11,6 +11,8 @@ class Display:
         self.SCREEN_WIDTH = SCREEN_WIDTH
         SCREEN_HEIGHT = 900
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
+        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = screen
         pygame.init()
         pygame.font.init()
         self.font = pygame.font.SysFont("ComicSans",15) # sets font
@@ -18,14 +20,14 @@ class Display:
         clock = pygame.time.Clock()
 
     def graphs (self):
-
+        mygame.banger()
         SCREEN_WIDTH = 470
         SCREEN_HEIGHT = 900
         BLOCK_SIZE = 40
         WHITE = (255,255,255)
         blue = (52,196,206)
         red = (255,14,14)
-        brown = (71,55,10)
+        ship = (161,139,117)
         buffer = self.margin / 30 + self.board_size * self.cell_size
         pygame.init()
         frame = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -66,7 +68,7 @@ class Display:
                             rect, color = item
                             if rect.collidepoint(event.pos):
                                 if color == blue: # here we can adjust the colors for when the AI shoots at us, and we can adjust the colors for our ships
-                                    item[1] = brown
+                                    item[1] = ship
             # draw all in every loop
             for row in topgrid: # this redraws each top square, with the updated colors
                 for item in row:
@@ -78,6 +80,19 @@ class Display:
                     pygame.draw.rect(frame, color, rect)
 
             pygame.display.flip()
+
+    def banger (self):
+        pygame.mixer.init()
+        #pygame.init()
+        #sound = pygame.mixer.Sound("metal.mp3")
+        #sound.set_volume(.5)a
+        #pygame.mixer.music.load("metal.mp3")
+        #pygame.mixer.music.play(loops=-1)
+
+        #Metal by Alexander Nakarada | https://www.serpentsoundstudios.com
+        #Music promoted by https://www.free-stock-music.com
+        #Attribution 4.0 International (CC BY 4.0)
+        #https://creativecommons.org/licenses/by/4.0/
 
     def fillCoordinates(self):
         SCREEN_WIDTH = 470
@@ -94,6 +109,12 @@ class Display:
         black = (0,0,0)
         white = (255, 255, 255)
         font = pygame.font.Font('freesansbold.ttf', 20)
+        titlefont = pygame.font.Font('freesansbold.ttf', 25)
+        toptext = titlefont.render('Opponent Board', False, (255,255,255))
+        bottext = titlefont.render('Player Board', False,(255,255,255))
+        self.screen.blit(toptext,(130,15))
+        self.screen.blit(bottext,(130,470))
+
         #for top board Y coordinates
         for y in range(9):
             text = font.render(yCoordinates[y], True, white, black)
