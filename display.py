@@ -167,6 +167,6 @@ class Display:
             self.screen.blit(text, textRect)
 
 mygame = Display()
-mygame.result(True)
+mygame.result(self,True)
 mygame.graphs()
 pygame.quit()
