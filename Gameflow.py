@@ -1,4 +1,4 @@
-from Display import Display
+
 from Computer import Computer
 from Board import Board
 from Ship import Ship
@@ -14,19 +14,17 @@ class GameFlow:
     playerBoard = None
 
     def __init__(self):
-        self.playerGUI = Display()
         self.computerAI = Computer()
         self.playerBoard = Board()
-        self.run()
 
-        
+
     def placeShips(self):
         shipNames = [Ship("carrier", 5), Ship("battleship", 4), Ship("submarine", 3), Ship("gunboat", 2), Ship("dinghy", 1)]
         directions = ["up", "right", "down", "left"]
         while (not self.playerGUI.donePlacingFleet()):
             self.playerGUI.displayPlacementPhase(self.playerBoard)
             shipSelected = self.playerGUI.selectShip()
-            
+
             for ship in shipNames:
                 if ship.getName() == shipSelected:
                     while (not self.playerGUI.donePlacingShip()): # returns true if the player confirms placement OR player wants to stop placing that ship
@@ -71,7 +69,7 @@ class GameFlow:
                 for x in range(len(self.computerFleet)):
                     if (self.computerAI.getBoard().getTile(attackCoordinates[0], attackCoordinates[1]).getName() == self.computerFleet[x].getName()):
                         self.computerFleet[x].damageShip()
-            
+
             gameEnd = True
             for ship in self.computerFleet:
                 if ship.getHealth() > 0:
@@ -81,19 +79,19 @@ class GameFlow:
                 break
 
             attackCoordinates = self.computerAI.shipGuess()
-            
+
             if (self.playerBoard.attackTile(attackCoordinates[0], attackCoordinates[1])):
                 for x in range(len(self.playerFleet())):
                     if (self.playerBoard.getTile(attackCoordinates[0], attackCoordinates[1]).getName() == self.playerFleet[x].getName()):
                         self.playerFleet[x].damageShip()
-            
+
             gameEnd = True
             for ship in self.playerFleet:
                 if ship.getHealth() > 0:
                     gameEnd = False
             if gameEnd:
                 break
-        
+
         if playerWins:
             self.playerGUI.displayWin()
         else:
@@ -107,13 +105,13 @@ class GameFlow:
 
 
 
-    
 
 
 
 
 
-        
+
+
 
 
 gameBeingPlayed = True

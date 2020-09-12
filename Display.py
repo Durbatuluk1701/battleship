@@ -1,7 +1,13 @@
 import pygame
 import sys
+from Computer import Computer
+from Board import Board
+from Ship import Ship
+from Tile import Tile
+#from Gameflow import Gameflow
 
 class Display:
+    #__battleship__ = Gameflow()
 
     def __init__ (self, board_size = 25, cell_size = 20, margin = 15): #constructor of the display, dimensions
         self.board_size = board_size
@@ -18,19 +24,53 @@ class Display:
         self.font = pygame.font.SysFont("ComicSans",15) # sets font
         pygame.display.set_caption("Battleship!") #name of window
         clock = pygame.time.Clock()
+        self.playerBoard = Board()
+        self.playerFleet = []
+        self.computerFleet = []
 
     def graphs (self):
-        mygame.banger()
+        self.banger()
         SCREEN_WIDTH = 470
         SCREEN_HEIGHT = 900
         BLOCK_SIZE = 40
         white = (255,255,255)
         blue = (52,196,206)
         red = (255,14,14)
+        black = (0, 0, 0)
         ship = (161,139,117)
         buffer = self.margin / 30 + self.board_size * self.cell_size
         pygame.init()
         frame = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        getNumShips = False
+        numShips = 0
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+
+        while not getNumShips:
+            toptext = titlefont.render('Please choose a number of ships (1 - 5)', False, (255,255,255))
+            self.screen.blit(toptext,(20,20))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return("quit the game")
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    for key in range(1, 6):
+                        if event.unicode == str(key):
+                            numShips = int(event.unicode)
+                            self.screen.fill(black)
+                            fleetTxt = titlefont.render('A fleet size of ' + str(key) + ", press enter to confirm", False, (255,255,255))
+                            print(key)
+                            self.screen.blit(fleetTxt, (20,50))
+
+                if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN and numShips != 0:
+                                 print(str(event.unicode))
+                                 getNumShips = True
+            pygame.display.flip()
+
+
+
         # create list with all rects
         topgrid = []
         botgrid = []
@@ -49,38 +89,90 @@ class Display:
                 pygame.draw.rect(frame,blue,rect,1)
                 row.append([rect,blue])
             botgrid.append(row)
-        mygame.fillCoordinates()
-        while True:
+        self.fillCoordinates()
+
+        shipNames = [Ship("dinghy", 1),Ship("gunboat", 2), Ship("submarine", 3), Ship("battleship", 4), Ship("carrier", 5)]
+        directions = ["up", "right", "down", "left"]
+        dir = 0
+        setupPhaseDone = False
+        shipPlace = 2
+        shipPositions = []
+        while not setupPhaseDone:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return("quit the game")
                     pygame.quit()
                     sys.exit()
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                      #check which rect was clicked and change its color on list
-                    for row in topgrid: # top graph
-                        for item in row:
-                            rect, color = item
-                            if rect.collidepoint(event.pos):
-                                if color == blue: # here we can say if (hit = true) set to red, or if (hit = false) set to white etc...
-                                    item[1] = red
+                    #for row in topgrid: # top graph
+                    #    for item in row:
+                    #        rect, color = item
+                    #        if rect.collidepoint(event.pos):
+                    #            if color == blue: # here we can say if (hit = true) set to red, or if (hit = false) set to white etc...
+                    #                item[1] = red
+                    x = 0
+                    y = 0
                     for row in botgrid: #bot graph
                         for item in row:
                             rect, color = item
                             if rect.collidepoint(event.pos):
-                                if color == blue: # here we can adjust the colors for when the AI shoots at us, and we can adjust the colors for our ships
-                                    item[1] = ship
+                                print(rect.collidepoint)
+                                if color == ship: # here we can adjust the colors for when the AI shoots at us, and we can adjust the colors for our ships
+
+                                    for coordinate in shipPositions:
+                                        print(coordinate[0], coordinate[1])
+                                        self.playerBoard.setTile(coordinate[0], coordinate[1], "water")
+
+
+
+                                shipOrigin = [x,y]
+                                for coordinate in shipPositions:
+                                    print(coordinate[0], coordinate[1])
+                                    self.playerBoard.setTile(coordinate[0], coordinate[1], "water")
+                                shipPlaced = False
+                                while not shipPlaced:
+                                    dir = (dir + 1) % 4
+                                    shipPlaced = self.playerBoard.placeShip(directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
+
+                                shipPositions = [shipOrigin]
+                                if directions[dir] == "up":
+                                    for i in range( shipNames[shipPlace].getHealth()):
+                                        shipPositions = shipPositions + [[shipPositions[0][0], shipPositions[0][1] - i]]
+                                if directions[dir] == "down":
+                                    for i in range( shipNames[shipPlace].getHealth()):
+                                        shipPositions = shipPositions + [[shipPositions[0][0], shipPositions[0][1] + i]]
+                                if directions[dir] == "right":
+                                    for i in range( shipNames[shipPlace].getHealth()):
+                                        shipPositions = shipPositions + [[shipPositions[0][0] + i, shipPositions[0][1]]]
+                                if directions[dir] == "left":
+                                    for i in range( shipNames[shipPlace].getHealth()):
+                                        shipPositions = shipPositions + [[shipPositions[0][0] - i, shipPositions[0][1]]]
+                                shipPositions.pop(0)
+                            x = (x + 1) % 9
+                        y = (y + 1) % 9
+
+
             # draw all in every loop
-            for row in topgrid: # this redraws each top square, with the updated colors
-                for item in row:
-                    rect, color = item
-                    pygame.draw.rect(frame, color, rect)
+            #for row in topgrid: # this redraws each top square, with the updated colors
+            #    for item in row:
+            #        rect, color = item
+            #        pygame.draw.rect(frame, color, rect)
+            x = 0
+            y = 0
             for row in botgrid: # this redraws each bot square, with the updated colors
                 for item in row:
+                    if(self.playerBoard.getTile(x, y).getTileItem() == "water"):
+                        item[1] = blue
+                    else:
+                        item[1] = ship
                     rect, color = item
                     pygame.draw.rect(frame, color, rect)
-
+                    x = (x + 1) % 9
+                y = (y + 1) % 9
             pygame.display.flip()
+
 
 
     def banger (self):
