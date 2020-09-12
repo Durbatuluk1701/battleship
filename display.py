@@ -24,7 +24,7 @@ class Display:
         SCREEN_WIDTH = 470
         SCREEN_HEIGHT = 900
         BLOCK_SIZE = 40
-        WHITE = (255,255,255)
+        white = (255,255,255)
         blue = (52,196,206)
         red = (255,14,14)
         ship = (161,139,117)
@@ -41,7 +41,7 @@ class Display:
                 pygame.draw.rect(frame,blue,rect,1)
                 row.append([rect, blue])
             topgrid.append(row)
-        mygame.fillCoordinates()
+
         for y in range(9): # this is creating the bottom graph
             row = []
             for x in range(9):
@@ -53,6 +53,7 @@ class Display:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    return("quit the game")
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -81,6 +82,7 @@ class Display:
 
             pygame.display.flip()
 
+
     def banger (self):
         pygame.mixer.init()
         #pygame.init()
@@ -97,13 +99,13 @@ class Display:
     def fillCoordinates(self):
         SCREEN_WIDTH = 470
         SCREEN_HEIGHT = 900
-        WHITE = (255,255,255)
+        white = (255,255,255)
         blue = (52,196,206)
         red = (255,14,14)
         pygame.init()
         frame = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         xCoordinates = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-        yCoordinates = ['9','8','7','6','5','4','3','2', '1']
+        yCoordinates = ['1','2','3','4','5','6','7','8', '9']
         bottom = 75
         left = 55
         black = (0,0,0)
@@ -167,6 +169,6 @@ class Display:
             self.screen.blit(text, textRect)
 
 mygame = Display()
-mygame.result(self,True)
+#mygame.result(self,True)
 mygame.graphs()
 pygame.quit()
