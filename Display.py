@@ -4,6 +4,7 @@ from Computer import Computer
 from Board import Board
 from Ship import Ship
 from Tile import Tile
+import math
 #from Gameflow import Gameflow
 
 class Display:
@@ -27,6 +28,7 @@ class Display:
         self.playerBoard = Board()
         self.playerFleet = []
         self.computerFleet = []
+        self.computer = Computer()
 
     def graphs (self):
         self.banger()
@@ -37,8 +39,8 @@ class Display:
         blue = (52,196,206)
         red = (255,14,14)
         black = (0, 0, 0)
-        ship = (161,139,117)
-        buffer = self.margin / 30 + self.board_size * self.cell_size
+        grey = (161,139,117)
+        buffer = math.floor(self.margin / 30 + self.board_size * self.cell_size)
         pygame.init()
         frame = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         getNumShips = False
@@ -60,12 +62,12 @@ class Display:
                             numShips = int(event.unicode)
                             self.screen.fill(black)
                             fleetTxt = titlefont.render('A fleet size of ' + str(key) + ", press enter to confirm", False, (255,255,255))
-                            print(key)
+                            
                             self.screen.blit(fleetTxt, (20,50))
 
                 if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN and numShips != 0:
-                                 print(str(event.unicode))
+                                 
                                  getNumShips = True
             pygame.display.flip()
 
@@ -94,10 +96,9 @@ class Display:
         shipNames = [Ship("dinghy", 1),Ship("gunboat", 2), Ship("submarine", 3), Ship("battleship", 4), Ship("carrier", 5)]
         directions = ["up", "right", "down", "left"]
         dir = 0
-        setupPhaseDone = False
-        shipPlace = 2
+        shipPlace = 0
         shipPositions = []
-        while not setupPhaseDone:
+        while not shipPlace >= numShips:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return("quit the game")
@@ -118,22 +119,19 @@ class Display:
                         for item in row:
                             rect, color = item
                             if rect.collidepoint(event.pos):
-                                print(rect.collidepoint)
-                                if color == ship: # here we can adjust the colors for when the AI shoots at us, and we can adjust the colors for our ships
-
-                                    for coordinate in shipPositions:
-                                        print(coordinate[0], coordinate[1])
-                                        self.playerBoard.setTile(coordinate[0], coordinate[1], "water")
-
-
-
                                 shipOrigin = [x,y]
                                 for coordinate in shipPositions:
-                                    print(coordinate[0], coordinate[1])
+                                
                                     self.playerBoard.setTile(coordinate[0], coordinate[1], "water")
                                 shipPlaced = False
                                 while not shipPlaced:
                                     dir = (dir + 1) % 4
+                                    """ if color == blue:
+                                        dir = 1
+                                        if x > 8 - shipNames[shipPlace].getHealth() - 1:
+                                            dir = 2
+                                        else:
+                                            dir = 3 """
                                     shipPlaced = self.playerBoard.placeShip(directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
 
                                 shipPositions = [shipOrigin]
@@ -152,7 +150,11 @@ class Display:
                                 shipPositions.pop(0)
                             x = (x + 1) % 9
                         y = (y + 1) % 9
-
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.playerFleet += [shipNames[shipPlace]]
+                        shipPositions = []
+                        shipPlace += 1
 
             # draw all in every loop
             #for row in topgrid: # this redraws each top square, with the updated colors
@@ -166,12 +168,108 @@ class Display:
                     if(self.playerBoard.getTile(x, y).getTileItem() == "water"):
                         item[1] = blue
                     else:
-                        item[1] = ship
+                        item[1] = grey
                     rect, color = item
                     pygame.draw.rect(frame, color, rect)
                     x = (x + 1) % 9
                 y = (y + 1) % 9
             pygame.display.flip()
+
+        for ship in self.playerFleet:
+            self.computer.shipPlace(ship)
+            self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
+        gameOver = False
+        playerWin = True
+        while not gameOver:
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return("quit the game")
+                    pygame.quit()
+                    sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x = 0
+                    y = 0
+                    clickedTop = False
+                    for row in topgrid: #bot graph
+                        for item in row:
+                            rect, color = item
+                            if rect.collidepoint(event.pos):
+                                clickedTop = True
+                                if(self.computer.attackTile(x, y)):
+                                    for ship in range(len(self.computerFleet)):
+                                        if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName():
+                                            self.computerFleet[ship].damageShip()       
+                            x = (x + 1) % 9
+                        y = (y + 1) % 9
+                    if clickedTop:
+                        x, y = 0, 0
+                        newTileAttacked = False
+                        while(not newTileAttacked):
+                            x, y = self.computer.shipGuess()
+                            newTileAttacked = self.playerBoard.attackTile(x, y)
+                        for ship in range(len(self.playerFleet)):
+                            if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
+                                self.playerFleet[ship].damageShip()
+                        
+                        for ship in self.playerFleet:
+                            print("p: " + ship.getName() + " " + str(ship.getHealth()))
+                        for ship in self.computerFleet:
+                            print("c: " + ship.getName() + " " + str(ship.getHealth()))
+            x = 0
+            y = 0
+            for row in botgrid: # this redraws each bot square, with the updated colors
+                for item in row:
+                    if(not self.playerBoard.getTile(x, y).getTileAttacked()):
+                        if(self.playerBoard.getTile(x, y).getTileItem() == "water"):
+                            item[1] = blue
+                        else:
+                            item[1] = grey
+                    elif self.playerBoard.getTile(x, y).getTileItem() == "water":
+                        item[1] = white
+                    else:
+                        item[1] = red
+                    
+                    rect, color = item
+                    pygame.draw.rect(frame, color, rect)
+                    x = (x + 1) % 9
+                y = (y + 1) % 9
+            x = 0
+            y = 0
+            for row in topgrid: # this redraws each bot square, with the updated colors
+                for item in row:
+                    if(not self.computer.getBoard().getTile(x, y).getTileAttacked()):
+                        item[1] = blue
+                    elif self.computer.getBoard().getTile(x, y).getTileItem() == "water":
+                        item[1] = white
+                    else:
+                        item[1] = red
+                    rect, color = item
+                    pygame.draw.rect(frame, color, rect)
+                    x = (x + 1) % 9
+                y = (y + 1) % 9
+            pygame.display.flip()
+            gameOver = True
+            for ship in self.computerFleet:
+                if(not ship.isDead()):
+                    gameOver = False
+            if(gameOver):
+                break
+            gameOver = True
+            for ship in self.playerFleet:
+                if(not ship.isDead()):
+                    gameOver = False
+            if(gameOver):
+                playerWin = False
+                break
+        while True:
+            self.result(playerWin)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return("quit the game")
+                    pygame.quit()
+                    sys.exit()   
 
 
 
@@ -252,13 +350,14 @@ class Display:
         if winner == True:
             text = font.render('You Win!', True, black, red)
             textRect = text.get_rect()
-            textRect.center = (self.boardWidth // 2, self.boardHeight // 2)
+            textRect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
             self.screen.blit(text, textRect)
         else:
             text = font.render('You Lose!', True, black, red)
             textRect = text.get_rect()
-            textRect.center = (self.boardWidth // 2, self.boardHeight // 2)
+            textRect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
             self.screen.blit(text, textRect)
+        pygame.display.flip()
 
 mygame = Display()
 #mygame.result(self,True)

@@ -14,8 +14,9 @@ class Computer:
         # if not, generate another set of coordinates (not the same) and try again until it can place ship
         shipPlaced = False
         while shipPlaced == False:
-            xValue = random.randint(0,9)
-            yValue = random.randint(0,9)
+            xValue = random.randint(0,8)
+            yValue = random.randint(0,8)
+            print(xValue, yValue)
             if self.__board__.placeShip("up", ship, xValue, yValue):
                 shipPlaced = True
             elif self.__board__.placeShip("down", ship, xValue, yValue):
@@ -32,11 +33,7 @@ class Computer:
     def shipGuess(self):
         # generate random x,y coordinates
         # attack those coords, if possible
-        openTile = False
-        while(openTile == False):
-            col = random.randint(0,9)
-            row = random.randint(0,9)
-            if self.__board__.attackTile(col,row):
-                openTile = True
-            else:
-                openTile = False
+        
+        col = random.randint(0,8)
+        row = random.randint(0,8)
+        return([row, col])
