@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module Ship</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>Ship</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cliamc%5Ccode%5Ceecs448%5Cbattleship%5Cship.py">c:\users\liamc\code\eecs448\battleship\ship.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="Ship.html#Ship">Ship</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Ship">class <strong>Ship</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Ship">Ship</a>(name,&nbsp;health)<br>
+&nbsp;<br>
+Class:&nbsp;<a href="#Ship">Ship</a><br>
+The&nbsp;<a href="#Ship">Ship</a>&nbsp;class&nbsp;is&nbsp;used&nbsp;to&nbsp;hold&nbsp;and&nbsp;do&nbsp;any&nbsp;actions&nbsp;that&nbsp;have&nbsp;to&nbsp;deal&nbsp;with&nbsp;ships&nbsp;in&nbsp;the&nbsp;battleship&nbsp;game.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Ship-__init__"><strong>__init__</strong></a>(self, name, health)</dt><dd><tt>Parameters&nbsp;:&nbsp;n/a<br>
+Return:&nbsp;n/a<br>
+Preconditions:&nbsp;Need&nbsp;to&nbsp;create&nbsp;a&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.<br>
+Postconditions:&nbsp;Sets&nbsp;the&nbsp;name&nbsp;and&nbsp;the&nbsp;health&nbsp;of&nbsp;a&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="Ship-damageShip"><strong>damageShip</strong></a>(self)</dt><dd><tt>Parameters&nbsp;:&nbsp;n/a<br>
+Return:&nbsp;n/a<br>
+Preconditions:&nbsp;To&nbsp;be&nbsp;called&nbsp;by&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.<br>
+Postconditions:&nbsp;Does&nbsp;one&nbsp;damage&nbsp;to&nbsp;a&nbsp;ship&nbsp;that&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;health.</tt></dd></dl>
+
+<dl><dt><a name="Ship-getHealth"><strong>getHealth</strong></a>(self)</dt><dd><tt>Parameters&nbsp;:&nbsp;n/a<br>
+Return:&nbsp;The&nbsp;private&nbsp;member&nbsp;varible&nbsp;__health__.<br>
+Preconditions:&nbsp;n/a<br>
+Postconditions:&nbsp;Gives&nbsp;current&nbsp;health&nbsp;of&nbsp;a&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="Ship-getName"><strong>getName</strong></a>(self)</dt><dd><tt>Parameters&nbsp;:&nbsp;n/a<br>
+Return:&nbsp;The&nbsp;private&nbsp;member&nbsp;varible&nbsp;__shipname__.<br>
+Preconditions:&nbsp;n/a<br>
+Postconditions:&nbsp;Gives&nbsp;the&nbsp;name&nbsp;of&nbsp;a&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="Ship-isDead"><strong>isDead</strong></a>(self)</dt><dd><tt>Parameters&nbsp;:&nbsp;n/a<br>
+Return:&nbsp;returns&nbsp;true&nbsp;if&nbsp;the&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;dead,&nbsp;and&nbsp;false&nbsp;if&nbsp;it&nbsp;is&nbsp;still&nbsp;alive.<br>
+Preconditions:&nbsp;Needs&nbsp;to&nbsp;be&nbsp;called&nbsp;by&nbsp;ship&nbsp;<a href="builtins.html#object">object</a>.<br>
+Postconditions:&nbsp;Tells&nbsp;us&nbsp;if&nbsp;the&nbsp;ship&nbsp;we&nbsp;are&nbsp;calling&nbsp;is&nbsp;dead&nbsp;or&nbsp;alive.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__health__</strong> = 0</dl>
+
+<dl><dt><strong>__shipLength__</strong> = 0</dl>
+
+<dl><dt><strong>__shipName__</strong> = ''</dl>
+
+<dl><dt><strong>__shipSpots__</strong> = []</dl>
+
+</td></tr></table></td></tr></table>
+</body></html>
