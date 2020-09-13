@@ -193,8 +193,7 @@ class Game:
                     while not shipPlaced:
                         dir = (dir + 1) % 4
                         shipPlaced = self.playerBoard.placeShip(directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
-
-                    shipPositions = [shipOrigin]
+                        shipPositions = [shipOrigin]
                     if directions[dir] == "up":
                         for i in range( shipNames[shipPlace].getHealth()):
                             shipPositions = shipPositions + [[shipPositions[0][0], shipPositions[0][1] - i]]
@@ -211,9 +210,10 @@ class Game:
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        self.playerFleet += [shipNames[shipPlace]]
-                        shipPositions = []
-                        shipPlace += 1
+                        if(shipPositions != []):
+                            self.playerFleet += [shipNames[shipPlace]]
+                            shipPositions = []
+                            shipPlace += 1
 
             # draw all in every loop
             #for row in topgrid: # this redraws each top square, with the updated colors
