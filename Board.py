@@ -33,11 +33,8 @@ class Board:
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0): # checks to make sure it is a valid coordinate on the board (Cant place a ship at -3, 50)
             raise Exception("Error Invalid X or Y bound to place a ship")
         self.__tileArray__[yCoord][xCoord].setTileItem(value)
-    #*****Place Ship Method*****
-    #Parameters: Direction (up, down, left, right), Ship object (health and name), xCoord (0 - 8), yCoord (0 - 8) ***TOP LEFT IS 0,0!!!***
-    #Returns: True (if ship has been placed), False(if ship encountered an issue while being placed)
-    #Preconditions: Valid 9x9 board created, the board can have other ships on it already
-    #Postconditions: Assuming true, a ship is placed at the correct coordinates in the direction specified
+    
+
     def placeShip(self, direction, ship, xCoord, yCoord):
         '''
         Place Ship Method
@@ -97,8 +94,6 @@ class Board:
         Preconditions: Valid 9x9 board exists
         Postconditions: N/A
         '''
-
-
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0): #checks to see if it is in bounds
             raise Exception("Error Invalid X or Y bound to attack a tile")
         return(not self.__tileArray__[yCoord][xCoord].getTileAttacked()) #returns true if the tile has not been attacked
@@ -132,4 +127,3 @@ class Board:
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0): #checks to see if it is in bounds
             raise Exception("Error Invalid X or Y bound to retrieve a tile")
         return self.__tileArray__[yCoord][xCoord]
-    #****************************

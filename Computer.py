@@ -33,18 +33,14 @@ class Computer:
         # check if it can place the ship without going out of bounds
         # if it can, it will place the ship
         # if not, generate another set of coordinates (not the same) and try again until it can place ship
+        directions = ["up", "right", "down", "left"]
         shipPlaced = False
         while shipPlaced == False:
             xValue = random.randint(0,8)
             yValue = random.randint(0,8)
+            rotation = random.randint(0,3)
             print(xValue, yValue)
-            if self.__board__.placeShip("up", ship, xValue, yValue):
-                shipPlaced = True
-            elif self.__board__.placeShip("down", ship, xValue, yValue):
-                shipPlaced = True
-            elif self.__board__.placeShip("left", ship, xValue, yValue):
-                shipPlaced = True
-            elif self.__board__.placeShip("right", ship, xValue, yValue):
+            if self.__board__.placeShip(directions[rotation], ship, xValue, yValue):
                 shipPlaced = True
             else:
                 pass
