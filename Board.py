@@ -32,8 +32,12 @@ class Board:
 
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0): # checks to make sure it is a valid coordinate on the board (Cant place a ship at -3, 50)
             raise Exception("Error Invalid X or Y bound to place a ship")
-        self.__tileArray__[xCoord][yCoord] = value
-
+        self.__tileArray__[yCoord][xCoord].setTileItem(value)
+    #*****Place Ship Method*****
+    #Parameters: Direction (up, down, left, right), Ship object (health and name), xCoord (0 - 8), yCoord (0 - 8) ***TOP LEFT IS 0,0!!!***
+    #Returns: True (if ship has been placed), False(if ship encountered an issue while being placed)
+    #Preconditions: Valid 9x9 board created, the board can have other ships on it already
+    #Postconditions: Assuming true, a ship is placed at the correct coordinates in the direction specified
     def placeShip(self, direction, ship, xCoord, yCoord):
         '''
         Place Ship Method
@@ -47,7 +51,7 @@ class Board:
             raise Exception("Error Invalid X or Y bound to place a ship")
 
         if (direction == "up"):
-            if ((yCoord - ship.getHealth()) < 0): #checks to see if the farthest point of the ship will go out of bounds
+            if ((yCoord - (ship.getHealth() - 1)) < 0): #checks to see if the farthest point of the ship will go out of bounds
                 return False                      #(if you try to place a battleship at 0, 0 going up means that it will be going out of bounds, thus this returns false)
             for y in range(ship.getHealth()):
                 if (self.__tileArray__[yCoord - y][xCoord].getTileItem() != "water"): #checks that the tiles are empty where the ship goes
@@ -56,7 +60,7 @@ class Board:
                 self.__tileArray__[yCoord - y][xCoord].setTileItem(ship.getName())
 
         if (direction == "down"):
-            if ((ship.getHealth() + yCoord) > 8):
+            if ((ship.getHealth() - 1 + yCoord) > 8):
                 return False
             for y in range(ship.getHealth()):
                 if (self.__tileArray__[yCoord + y][xCoord].getTileItem() != "water"):
@@ -65,7 +69,7 @@ class Board:
                 self.__tileArray__[yCoord + y][xCoord].setTileItem(ship.getName())
 
         if (direction == "left"):
-            if ((xCoord - ship.getHealth()) < 0):
+            if ((xCoord - (ship.getHealth() -1)) < 0):
                 return False
             for x in range(ship.getHealth()):
                 if (self.__tileArray__[yCoord][xCoord - x].getTileItem() != "water"):
@@ -74,7 +78,7 @@ class Board:
                 self.__tileArray__[yCoord][xCoord - x].setTileItem(ship.getName())
 
         if (direction == "right"):
-            if ((ship.getHealth() + xCoord) > 8):
+            if ((ship.getHealth() -1  + xCoord) > 8):
                 return False
             for x in range(ship.getHealth()):
                 if (self.__tileArray__[yCoord][xCoord + x].getTileItem() != "water"):
@@ -128,3 +132,4 @@ class Board:
         if (xCoord > 8 or yCoord > 8 or xCoord < 0 or yCoord < 0): #checks to see if it is in bounds
             raise Exception("Error Invalid X or Y bound to retrieve a tile")
         return self.__tileArray__[yCoord][xCoord]
+    #****************************
