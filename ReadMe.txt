@@ -6,19 +6,20 @@ As a team we decided to use python as our coding language to implement this batt
 Our teams Battleship game used pygame as a library to produce a display of our game.
 Now lets look at how this game was emplemented:
 
-    1. Display Class
-        -
     
-    2. GameFlow Class
+    1. GameFlow Class
 
         - Overview: the gameflow class is used to run the game and do any interaction with the player. This class imports the display, computer, board, ship and tile classes.
 
-        - placeShips(): Uses nested for loops to make sure that when the user is placing ships he isnt placing them out of bounds or on top of another ship.
-                        It also allows the user to pick which direction they want the ship to face before placing it down.
-
-        - run(): runs the function that allows users to place ships and uses a while loop to continue the game util one side has all its ships destroyed.
+        - broken into 4 main parts, 
+          1: get the number of ships the user wants to place            chooseNumShips()
+          2: place those ships and the computer's ships                 placeShipPhase()
+          3: attack phase where both teams attack the other's board     attackPhase()
+          4: win phase, displays who won                                result()
+        
+        - game(): runs the function that plays the game
     
-    3. Board Class
+   2. Board Class
     
         - Overview: This class creates a board using an array to act as the game grid and imports tile and ship classes.
 
@@ -32,7 +33,7 @@ Now lets look at how this game was emplemented:
 
         -getTile(xCoord, yCoord): takes in an x,y coordinate and returns the value inside of the tile.
     
-    4. Tile Class
+    3. Tile Class
 
         - Overview: the tile class holds all the information we need to know about a square on the grid.
                     A tile either holds water, a ship or if it has been attacked or not.
@@ -45,7 +46,7 @@ Now lets look at how this game was emplemented:
 
         - setTileItem(tileItem): sets what is in the tile through the parameters.
     
-    5. Ship Class
+    4. Ship Class
 
         - Overview: Holds information on wht kind of ship, its health, how long it is, and where they are on the board.
 
@@ -55,7 +56,7 @@ Now lets look at how this game was emplemented:
 
         - isDead(): Checks if the health of the ship is zero and if it is returns true otherwise false.
     
-    6. Computer Class
+    5. Computer Class
 
         - Overview: The computer class is used to control all things AI related. This class imports the random library, board, ship and tile classees.
                     In this class it has a private computer board for the AI and two funcitions to randomly select ship placement and how it guesses where to aim on the players board.
