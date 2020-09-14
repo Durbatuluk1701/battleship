@@ -13,7 +13,7 @@ Now lets look at how this game was emplemented:
 
         - broken into 4 main parts, 
           1: get the number of ships the user wants to place            chooseNumShips()
-          2: place those ships and the computer's ships                 placeShipPhase()
+          2: place those ships and the computer's ships                 placeShipPhase() NOTE: press return key to confirm placement of ships
           3: attack phase where both teams attack the other's board     attackPhase()
           4: win phase, displays who won                                result()
         
