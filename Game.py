@@ -56,8 +56,8 @@ class Game:
         Postconditions: asuming event is exit, quits the game
         '''
         if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+            pygame.quit()
+            sys.exit()
 
     def chooseNumShips(self):
         '''
@@ -74,21 +74,21 @@ class Game:
             toptext = titlefont.render('Please choose a number of ships (1 - 5)', False, (255,255,255))
             self.screen.blit(toptext,(20,20))
             for event in pygame.event.get():
-                self.checkQuit(event)
+                self.checkQuit(event) #checks if user exits
 
-                if event.type == pygame.KEYDOWN:
-                    for key in range(1, 6):
+                if event.type == pygame.KEYDOWN: 
+                    for key in range(1, 6): # if user presses key 1-5
                         if event.unicode == str(key):
-                            numShips = int(event.unicode)
+                            numShips = int(event.unicode) #sets fleet size and asks for confirmation
                             self.screen.fill(black)
                             fleetTxt = titlefont.render('A fleet size of ' + str(key) + ", press enter to confirm", False, white)
                             self.screen.blit(fleetTxt, (20,50))
 
                 if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN and numShips != 0:
-                                getNumShips = True
-                                return(numShips)
-            pygame.display.flip()
+                        if event.key == pygame.K_RETURN and numShips != 0: #confirms that the user inputted keys
+                            getNumShips = True
+                            return(numShips)
+            pygame.display.flip() #goes to next frame
 
     def createDisplayBoard(self, xOffset, yOffset):
         '''
@@ -103,8 +103,8 @@ class Game:
         for y in range(9): # this is creating the top graph
             row = []
             for x in range(9):
-                rect = pygame.Rect(xOffset + y*BLOCK_SIZE, x*BLOCK_SIZE + yOffset, BLOCK_SIZE, BLOCK_SIZE )
-                pygame.draw.rect(self.screen,blue,rect,1)
+                rect = pygame.Rect(xOffset + y*BLOCK_SIZE, x*BLOCK_SIZE + yOffset, BLOCK_SIZE, BLOCK_SIZE ) #creates a 9x9 rectangle grid
+                pygame.draw.rect(self.screen,blue,rect,1) #draws blue squares on it
                 row.append([rect, blue])
             grid.append(row)
         return grid
@@ -124,7 +124,7 @@ class Game:
             for item in row:
                 rect, color = item
                 if rect.collidepoint(event.pos):
-                    origin = [x,y]
+                    origin = [x,y] #sets the origin to the spot which was clicked on 
                 x = (x + 1) % 9
             y = (y + 1) % 9
         return origin
@@ -142,12 +142,12 @@ class Game:
         for row in grid: # this redraws each bot square, with the updated colors
             for item in row:
                 if(not board.getTile(x, y).getTileAttacked()):
-                    if(displayShips):
+                    if(displayShips): # if you want to show the ships on board
                         if(self.playerBoard.getTile(x, y).getTileItem() == "water"):
                             item[1] = blue
                         else:
                             item[1] = grey
-                    else:
+                    else: # if you dont want to show the ships
                         item[1] = blue
                 elif board.getTile(x, y).getTileItem() == "water":
                     item[1] = white
@@ -176,22 +176,17 @@ class Game:
         while not shipPlace >= numShips:
             for event in pygame.event.get():
                 self.checkQuit(event)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                     #check which rect was clicked and change its color on list
-                    #for row in topgrid: # top graph
-                    #    for item in row:
-                    #        rect, color = item
-                    #        if rect.collidepoint(event.pos):
-                    #            if color == blue: # here we can say if (hit = true) set to red, or if (hit = false) set to white etc...
-                    #                item[1] = red
-                    shipOrigin = self.scanGridClick(event, self.botgrid)
-                    if shipOrigin == [-1, -1]:
+                if event.type == pygame.MOUSEBUTTONDOWN: #if mouse clicked 
+                    
+                    shipOrigin = self.scanGridClick(event, self.botgrid) #gets the square that you clicked on
+                    if shipOrigin == [-1, -1]: #if you clicked outside grid
                         break
-                    for coordinate in shipPositions:
-                        self.playerBoard.setTile(coordinate[0], coordinate[1], "water")
+                    for coordinate in shipPositions: # deletes old ship placement ****note for first ship ship positions is [] so it skips this step
+                        self.playerBoard.setTile(coordinate[0], coordinate[1], "water") # sets those spots to water
+
                     shipPlaced = False
                     while not shipPlaced:
-                        dir = (dir + 1) % 4
+                        dir = (dir + 1) % 4 #everytime you click on a spot increments the direction to the next available spot
                         shipPlaced = self.playerBoard.placeShip(directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
                         shipPositions = [shipOrigin]
                     if directions[dir] == "up":
@@ -206,11 +201,11 @@ class Game:
                     if directions[dir] == "left":
                         for i in range( shipNames[shipPlace].getHealth()):
                             shipPositions = shipPositions + [[shipPositions[0][0] - i, shipPositions[0][1]]]
-                    shipPositions.pop(0)
+                    shipPositions.pop(0) # in placing a ship, shipPositions has a duplicate of the  origin spot, so pop that off
 
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN: #confirm placement
                     if event.key == pygame.K_RETURN:
-                        if(shipPositions != []):
+                        if(shipPositions != []): #checks to make sure you placed a ship
                             self.playerFleet += [shipNames[shipPlace]]
                             shipPositions = []
                             shipPlace += 1
@@ -220,11 +215,11 @@ class Game:
             #    for item in row:
             #        rect, color = item
             #        pygame.draw.rect(self.screen, color, rect)
-            self.displayGrid(self.botgrid, self.playerBoard, True)
+            self.displayGrid(self.botgrid, self.playerBoard, True) # updates bottom grid to show new values
             
-            pygame.display.flip()
+            pygame.display.flip() #displays the updated frame
 
-        for ship in self.playerFleet:
+        for ship in self.playerFleet:   # creates computer fleet and places ship on the computer board
             self.computer.shipPlace(ship)
             self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
     
@@ -241,43 +236,35 @@ class Game:
         while not gameOver:
             
             for event in pygame.event.get():
-                self.checkQuit(event)
+                self.checkQuit(event) #checks to see if exited game
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    x = 0
-                    y = 0
-                    clickedTop = False
-                    for row in self.topgrid: #bot graph
-                        for item in row:
-                            rect = item[0]
-                            if rect.collidepoint(event.pos):
-                                clickedTop = True
-                                if(self.computer.attackTile(x, y)):
-                                    for ship in range(len(self.computerFleet)):
-                                        if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName():
-                                            self.computerFleet[ship].damageShip()       
-                            x = (x + 1) % 9
-                        y = (y + 1) % 9
-                    if clickedTop:
-                        x, y = 0, 0
-                        newTileAttacked = False
-                        while(not newTileAttacked):
-                            x, y = self.computer.shipGuess()
-                            newTileAttacked = self.playerBoard.attackTile(x, y)
-                        for ship in range(len(self.playerFleet)):
-                            if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
-                                self.playerFleet[ship].damageShip()
+                if event.type == pygame.MOUSEBUTTONDOWN: #if clicked
+                    x , y = self.scanGridClick(event, self.topgrid) #gets where clicked on topgrid
+                    if(x == -1 and y == -1): #if you clicked outside of the board exit event loop
+                        break
+
+                    if(self.computer.attackTile(x, y)): #attacks the computers board
+                        for ship in range(len(self.computerFleet)): #checks to see if you hit any of the ships
+                            if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName(): #compares tile name to fleet name
+                                self.computerFleet[ship].damageShip()       # if it matches damages that ship
+        
+                    
+                    x, y = 0, 0
+                    newTileAttacked = False
+                    while(not newTileAttacked): # ensures that the computer gets a new guess
+                        x, y = self.computer.shipGuess()
+                        newTileAttacked = self.playerBoard.attackTile(x, y) #attack tile returns false if you have already attacked that tile
+                    for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
+                        if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
+                            self.playerFleet[ship].damageShip()
                         
-                        for ship in self.playerFleet:
-                            print("p: " + ship.getName() + " " + str(ship.getHealth()))
-                        for ship in self.computerFleet:
-                            print("c: " + ship.getName() + " " + str(ship.getHealth()))
             
-            self.displayGrid(self.botgrid,self.playerBoard, True)
-            self.displayGrid(self.topgrid,self.computer.getBoard(), False)
+            self.displayGrid(self.botgrid,self.playerBoard, True) #displays complete bottom grid
+            self.displayGrid(self.topgrid,self.computer.getBoard(), False) #displays top grid with hidden ships
             
-            pygame.display.flip()
-            gameOver = True
+            pygame.display.flip() #updates frame
+
+            gameOver = True #checks if either fleet is completely dead
             for ship in self.computerFleet:
                 if(not ship.isDead()):
                     gameOver = False
@@ -288,9 +275,10 @@ class Game:
                 if(not ship.isDead()):
                     gameOver = False
             if(gameOver):
-                playerWin = False
+                playerWin = False # if the player fleet is dead sets playerWin to false
                 break
-        return playerWin
+
+        return playerWin # returns true if player won, false if computer won
 
     def game(self):
         '''
@@ -306,14 +294,18 @@ class Game:
         self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
         self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
 
-        self.fillCoordinates()
-        self.placeShipPhase(numShips)
-        playerWin = self.attackPhase()
+        self.fillCoordinates() # sets the UI
+        self.placeShipPhase(numShips) # places ship
+        playerWin = self.attackPhase() 
         
-        while True:
-            self.result(playerWin)
+        quitGame = False
+        while not quitGame: 
+            self.result(playerWin) #displays if you win or not
             for event in pygame.event.get():
-                self.checkQuit(event)
+                self.checkQuit(event) #checks to see if you quit
+                if event.type == pygame.KEYDOWN: #confirm placement
+                    if event.key == pygame.K_RETURN: # quits if hit enter
+                        quitGame = True 
 
     def banger (self):
         '''
@@ -400,8 +392,8 @@ class Game:
         Preconditions: game finished playing
         Postconditions: displays winner or loser screen
         '''
-        black = (0,0,0)
-        red = (255, 0, 0)
+
+        red = (255, 0, 0) # makes red more vibrant
         font = pygame.font.Font('freesansbold.ttf', 50)
         if winner == True:
             text = font.render('You Win!', True, black, red)
@@ -415,5 +407,8 @@ class Game:
             self.screen.blit(text, textRect)
         pygame.display.flip()
 
+
 mygame = Game()
 mygame.game()
+pygame.quit()
+sys.exit()

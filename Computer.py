@@ -39,7 +39,6 @@ class Computer:
             xValue = random.randint(0,8)
             yValue = random.randint(0,8)
             rotation = random.randint(0,3)
-            print(xValue, yValue)
             if self.__board__.placeShip(directions[rotation], ship, xValue, yValue):
                 shipPlaced = True
             else:
