@@ -177,13 +177,13 @@ class Game:
         while not shipPlace >= numShips:
             
             text = font.render('Placing ship: ', False, white)
-            self.screen.blit(text, (50, self.SCREEN_HEIGHT / 2 - 25))
-            rect = pygame.Rect(160, self.SCREEN_HEIGHT / 2 - 25, 200, 20)
+            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
+            rect = pygame.Rect(160, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
             pygame.draw.rect(self.screen, black, rect)
             text = font.render(shipNames[shipPlace].getName(), False, white)
-            self.screen.blit(text, (165, self.SCREEN_HEIGHT / 2 - 25))
+            self.screen.blit(text, (165, int(self.SCREEN_HEIGHT / 2) - 25))
             text = font.render("click to place, enter to confirm", False, white)
-            self.screen.blit(text, (50, self.SCREEN_HEIGHT / 2 - 5))
+            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 5))
 
             for event in pygame.event.get():
                 self.checkQuit(event)
@@ -246,10 +246,10 @@ class Game:
         font = pygame.font.Font('freesansbold.ttf', 17)
         while not gameOver:
 
-            rect = pygame.Rect(0, self.SCREEN_HEIGHT / 2 - 25, 400, 45)
+            rect = pygame.Rect(0, int(self.SCREEN_HEIGHT / 2 - 25), 400, 45)
             pygame.draw.rect(self.screen, black, rect)
             text = font.render("Click on top board to attack a tile", False, white)
-            self.screen.blit(text, (50, self.SCREEN_HEIGHT / 2 - 25))
+            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
 
             for event in pygame.event.get():
                 self.checkQuit(event) #checks to see if exited game
@@ -414,17 +414,17 @@ class Game:
         if winner == True:
             text = font.render('You Win!', True, black, red)
             textRect = text.get_rect()
-            textRect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
+            textRect.center = (int(self.SCREEN_WIDTH // 2), int(self.SCREEN_HEIGHT // 2))
             self.screen.blit(text, textRect)
         else:
             text = font.render('You Lose!', True, black, red)
             textRect = text.get_rect()
-            textRect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
+            textRect.center = (int(self.SCREEN_WIDTH // 2), int(self.SCREEN_HEIGHT // 2))
             self.screen.blit(text, textRect)
         font = pygame.font.Font('freesansbold.ttf', 20)
         text = font.render('Press enter to quit', True, black, red)
         textRect = text.get_rect()
-        textRect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 30)
+        textRect.center = (int(self.SCREEN_WIDTH // 2), int(self.SCREEN_HEIGHT // 2) + 30)
         self.screen.blit(text, textRect)
         pygame.display.flip()
 
