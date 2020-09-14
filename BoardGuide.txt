@@ -1,3 +1,0 @@
-bool placeShip(direction, shipType, xCoord, yCoord);
-
-
