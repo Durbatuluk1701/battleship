@@ -4,7 +4,16 @@
 In this file we will be explaining how our battleship game was created and how it works.
 As a team we decided to use python as our coding language to implement this battleship game.
 Our teams Battleship game used pygame as a library to produce a display of our game.
-Now lets look at how this game was emplemented:
+
+Instructions: When you start you will need to hit a key (1-5), this will choose the size of your fleet.
+Once you've hit the number you want, you can either hit a different number to change your choice, or hit enter to confirm
+Once you confirm you're in the ship placement phase.
+Place a ship by clicking on your bottom grid, confirm the placement of the ship by hitting enter.
+Once you have placed all of your ships, start click on the top grid to attack a square
+Once the computer or you have sunk all the enemy ships, a win/lose screen will appear.
+Hit enter to exit.
+
+Now lets look at how this game was implemented:
 
     
     1. GameFlow Class
