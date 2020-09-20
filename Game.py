@@ -5,6 +5,7 @@ from Board import Board
 from Ship import Ship
 from Tile import Tile
 import math
+import time
 #from Gameflow import Gameflow
 
 #**** Colors *****#
@@ -296,6 +297,32 @@ class Game:
 
         return playerWin # returns true if player won, false if computer won
 
+    def selectPlayers(self):
+        getNumberPlayers = False
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        numberPlayers = 0
+        while not getNumberPlayers:
+            toptext = titlefont.render("Please choose a number of players (1 - 2): ", False, (255,255,255))
+            self.screen.blit(toptext, (20,20))
+            for event in pygame.event.get():
+                self.checkQuit(event) #check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    for key in range(1,3):
+                        if event.unicode == str(key):
+                            numberPlayers = int(event.unicode)
+                            self.screen.fill(black)
+                            playerText = titlefont.render("Confirm " + str(key) + " players", False, white)
+                            self.screen.blit(playerText, (20, 50))
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN and numberPlayers != 0:
+                        getNumberPlayers = False
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        return(numberPlayers)
+            pygame.display.flip()
+
     def game(self):
         '''
         game Method
@@ -305,14 +332,28 @@ class Game:
         Postconditions: Plays battleship until one person wins then waits to exit
         '''
         self.banger() # music
+
+        numPlayers = self.selectPlayers(); # selects the number of players
+
         numShips = self.chooseNumShips() #asks user for the number of ships in the game
 
         self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
         self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
 
-        self.fillCoordinates() # sets the UI
-        self.placeShipPhase(numShips) # places ship
-        playerWin = self.attackPhase() 
+        playerWin = ""
+
+        if (numPlayers == 1):
+            self.fillCoordinates() # sets the UI
+            self.placeShipPhase(numShips) # places ship
+            playerWin = self.attackPhase()
+        # elif (numPlayers == 2):
+        #     self.fillCoordinates() # sets the UI
+        #     self.placeShipPhase(numShips) # places ship
+        #     playerWin = self.attackPhase()
+        else:
+            toptext = pygame.font.Font('freesansbold.ttf', 20).render("NO PLAYERS", False, (255,255,255))
+            self.screen.blit(toptext, (20,20))
+            return
         
         quitGame = False
         while not quitGame: 
@@ -408,7 +449,6 @@ class Game:
         Preconditions: game finished playing
         Postconditions: displays winner or loser screen
         '''
-
         red = (255, 0, 0) # makes red more vibrant
         font = pygame.font.Font('freesansbold.ttf', 50)
         if winner == True:
