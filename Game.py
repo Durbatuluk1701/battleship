@@ -5,7 +5,6 @@ from Board import Board
 from Ship import Ship
 from Tile import Tile
 import math
-import time
 #from Gameflow import Gameflow
 
 #**** Colors *****#
