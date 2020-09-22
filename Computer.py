@@ -3,7 +3,7 @@ from Board import Board
 from Ship import Ship
 from Tile import Tile
 class Computer:
-    def __init__(self):
+    def __init__(self, difficulty):
         """
         Default Constructor
         Parameters: n/a
@@ -12,6 +12,7 @@ class Computer:
         Postconditions: A Computer object is created with a default Board object within it.
         """
         self.__board__ = Board()
+        self.difficulty = difficulty
     def getBoard(self):
         """
         Get Board Method
