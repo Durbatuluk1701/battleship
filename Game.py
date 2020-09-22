@@ -40,12 +40,6 @@ class Game:
         pygame.display.set_caption("Battleship!") #name of window
         self.buffer = math.floor(self.margin / 30 + self.board_size * self.cell_size) #buffer between top and bottom grid
         #****************#
-        #*****Member Variables of game*****#
-        self.playerBoard = Board()
-        self.playerFleet = []
-        self.computerFleet = []
-        self.computer = Computer() #contains it's own board
-        #****************#
 
     def checkQuit(self, event):
         '''
@@ -322,6 +316,36 @@ class Game:
                         return(numberPlayers)
             pygame.display.flip()
 
+    def chooseAIDifficulty(self):
+        self.screen.fill(black)
+        getAIDifficulty = False
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        numberPlayers = 0
+        while not getAIDifficulty:
+            toptext = titlefont.render("Please choose an AI Difficulty", False, (255, 255, 255))
+            lowertext = titlefont.render("(1 = Easy, 2 = Medium, 3 = Hard): ", False, (255,255,255))
+            self.screen.blit(toptext, (20,20))
+            self.screen.blit(lowertext, (20,50))
+            for event in pygame.event.get():
+                self.checkQuit(event) #check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    for key in range(1,4):
+                        if event.unicode == str(key):
+                            numberPlayers = int(event.unicode)
+                            self.screen.fill(black)
+                            difficultyConverter = ["Easy", "Medium", "Hard"]
+                            playerText = titlefont.render("Confirm " + difficultyConverter[key-1] + " AI Difficulty (Enter)", False, white)
+                            self.screen.blit(playerText, (20, 80))
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN and numberPlayers != 0:
+                        getNumberPlayers = False
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        return(numberPlayers)
+            pygame.display.flip()
+
     def game(self):
         '''
         game Method
@@ -332,9 +356,21 @@ class Game:
         '''
         self.banger() # music
 
+        #*****Member Variables of game*****#
+        self.playerBoard = Board()
+        self.playerFleet = []
+        #****************#
+
         numPlayers = self.selectPlayers(); # selects the number of players
 
         numShips = self.chooseNumShips() #asks user for the number of ships in the game
+
+        if (numPlayers == 1):
+            # Computer Variables
+            self.computerFleet = []
+            aiDifficulty = self.chooseAIDifficulty()
+            self.computer = Computer(aiDifficulty)
+            # End Computer Variables
 
         self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
         self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
