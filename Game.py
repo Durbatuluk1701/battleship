@@ -28,6 +28,7 @@ class Game:
         self.board_size = board_size
         self.cell_size = cell_size
         self.margin = margin
+        self.turn = ""
         SCREEN_WIDTH = 470
         self.SCREEN_WIDTH = SCREEN_WIDTH
         SCREEN_HEIGHT = 900
@@ -137,7 +138,7 @@ class Game:
             for item in row:
                 if(not board.getTile(x, y).getTileAttacked()):
                     if(displayShips): # if you want to show the ships on board
-                        if(self.playerBoard.getTile(x, y).getTileItem() == "water"):
+                        if(board.getTile(x, y).getTileItem() == "water"):
                             item[1] = blue
                         else:
                             item[1] = grey
@@ -252,25 +253,33 @@ class Game:
                     x , y = self.scanGridClick(event, self.topgrid) #gets where clicked on topgrid
                     if(x == -1 and y == -1): #if you clicked outside of the board exit event loop
                         break
-
-                    if(self.computer.attackTile(x, y)): #attacks the computers board
-                        for ship in range(len(self.computerFleet)): #checks to see if you hit any of the ships
-                            if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName(): #compares tile name to fleet name
-                                self.computerFleet[ship].damageShip()       # if it matches damages that ship
-        
+                    if(self.turn == "Player 1"):
+                        if(self.computer.attackTile(x, y)): #attacks the computers board
+                            for ship in range(len(self.computerFleet)): #checks to see if you hit any of the ships
+                                if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName(): #compares tile name to fleet name
+                                    self.computerFleet[ship].damageShip()       # if it matches damages that ship
+                            self.swapBoards(self.playerBoard, self.computer.getBoard())
+                            self.turn = "Player 2"
+                    else:
+                        if(self.playerBoard.attackTile(x, y)):
+                            for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
+                                if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
+                                    self.playerFleet[ship].damageShip()
+                            self.swapBoards(self.computer.getBoard(), self.playerBoard)
+                            self.turn = "Player 1"
                     
-                    x, y = 0, 0
-                    newTileAttacked = False
-                    while(not newTileAttacked): # ensures that the computer gets a new guess
-                        x, y = self.computer.shipGuess()
-                        newTileAttacked = self.playerBoard.attackTile(x, y) #attack tile returns false if you have already attacked that tile
-                    for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
-                        if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
-                            self.playerFleet[ship].damageShip()
+                    # x, y = 0, 0
+                    # newTileAttacked = False
+                    # while(not newTileAttacked): # ensures that the computer gets a new guess
+                    #     x, y = self.computer.shipGuess()
+                    #     newTileAttacked = self.playerBoard.attackTile(x, y) #attack tile returns false if you have already attacked that tile
+                    # for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
+                    #     if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
+                    #         self.playerFleet[ship].damageShip()
                         
             
-            self.displayGrid(self.botgrid,self.playerBoard, True) #displays complete bottom grid
-            self.displayGrid(self.topgrid,self.computer.getBoard(), False) #displays top grid with hidden ships
+            # self.displayGrid(self.botgrid,self.playerBoard, True) #displays complete bottom grid
+            # self.displayGrid(self.topgrid,self.computer.getBoard(), True) #displays top grid with hidden ships
             
             pygame.display.flip() #updates frame
 
@@ -289,6 +298,11 @@ class Game:
                 break
 
         return playerWin # returns true if player won, false if computer won
+
+    def swapBoards(self, currentBottom, currentTop):
+        self.displayGrid(self.botgrid, currentTop, True) #Set current top grid to display in bottom
+        self.displayGrid(self.topgrid, currentBottom, False) #Opposite of above
+
 
     def selectPlayers(self):
         getNumberPlayers = False
@@ -363,7 +377,7 @@ class Game:
 
         numPlayers = self.selectPlayers(); # selects the number of players
 
-        numShips = self.chooseNumShips() #asks user for the number of ships in the game
+        numShips = self.chooseNumShips(); #asks user for the number of ships in the game
 
         if (numPlayers == 1):
             # Computer Variables
@@ -371,6 +385,8 @@ class Game:
             aiDifficulty = self.chooseAIDifficulty()
             self.computer = Computer(aiDifficulty)
             # End Computer Variables
+        else:
+            self.turn = "Player 1"
 
         self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
         self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
