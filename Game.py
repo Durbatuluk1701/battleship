@@ -320,7 +320,7 @@ class Game:
         self.screen.fill(black)
         getAIDifficulty = False
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
-        numberPlayers = 0
+        aiDifficulty = 0
         while not getAIDifficulty:
             toptext = titlefont.render("Please choose an AI Difficulty", False, (255, 255, 255))
             lowertext = titlefont.render("(1 = Easy, 2 = Medium, 3 = Hard): ", False, (255,255,255))
@@ -328,22 +328,22 @@ class Game:
             self.screen.blit(lowertext, (20,50))
             for event in pygame.event.get():
                 self.checkQuit(event) #check if user exits
+                difficultyConverter = ["Easy", "Medium", "Hard"]
 
                 if event.type == pygame.KEYDOWN:
                     for key in range(1,4):
                         if event.unicode == str(key):
-                            numberPlayers = int(event.unicode)
+                            aiDifficulty = int(event.unicode)
                             self.screen.fill(black)
-                            difficultyConverter = ["Easy", "Medium", "Hard"]
                             playerText = titlefont.render("Confirm " + difficultyConverter[key-1] + " AI Difficulty (Enter)", False, white)
                             self.screen.blit(playerText, (20, 80))
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN and numberPlayers != 0:
+                    if event.key == pygame.K_RETURN and aiDifficulty != 0:
                         getNumberPlayers = False
                         self.screen.fill(black)
                         pygame.display.flip()
-                        return(numberPlayers)
+                        return(difficultyConverter[aiDifficulty-1])
             pygame.display.flip()
 
     def game(self):
