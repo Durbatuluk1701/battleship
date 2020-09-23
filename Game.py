@@ -339,8 +339,8 @@ class Game:
                             self.screen.blit(playerText, (20, 80))
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN and aiDifficulty != 0:
-                        getNumberPlayers = False
+                    if event.key == pygame.K_RETURN and (aiDifficulty in [1,2,3]):
+                        getAIDifficulty = True
                         self.screen.fill(black)
                         pygame.display.flip()
                         return(difficultyConverter[aiDifficulty-1])
