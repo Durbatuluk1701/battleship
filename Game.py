@@ -1,12 +1,10 @@
-'''This file contains most of the functionality of the game, aside from the AI functionality in Computer.py'''
-import math
-import sys
-
 import pygame
+import sys
 from Computer import Computer
 from Board import Board
 from Ship import Ship
-
+from Tile import Tile
+import math
 #from Gameflow import Gameflow
 
 #**** Colors *****#
@@ -42,13 +40,6 @@ class Game:
         self.font = pygame.font.SysFont("ComicSans",15) # sets font
         pygame.display.set_caption("Battleship!") #name of window
         self.buffer = math.floor(self.margin / 30 + self.board_size * self.cell_size) #buffer between top and bottom grid
-        self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
-        self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
-        #*****Member Variables of game*****#
-        self.playerBoard = Board()
-        self.playerFleet = []
-        self.computerFleet = []
-        self.computer = {}
         #****************#
 
     def checkQuit(self, event):
@@ -80,7 +71,7 @@ class Game:
             for event in pygame.event.get():
                 self.checkQuit(event) #checks if user exits
 
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN: 
                     for key in range(1, 6): # if user presses key 1-5
                         if event.unicode == str(key):
                             numShips = int(event.unicode) #sets fleet size and asks for confirmation
@@ -89,9 +80,9 @@ class Game:
                             self.screen.blit(fleetTxt, (20,50))
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN and numShips != 0: #confirms that the user inputted keys
-                        getNumShips = True
-                        return numShips
+                        if event.key == pygame.K_RETURN and numShips != 0: #confirms that the user inputted keys
+                            getNumShips = True
+                            return(numShips)
             pygame.display.flip() #goes to next frame
 
     def createDisplayBoard(self, xOffset, yOffset):
@@ -112,7 +103,7 @@ class Game:
                 row.append([rect, blue])
             grid.append(row)
         return grid
-
+    
     def scanGridClick(self, event, grid):
         '''
         scanGridClick Method
@@ -126,13 +117,13 @@ class Game:
         origin = [-1,-1]
         for row in grid: #bot graph
             for item in row:
-                rect = item
+                rect, color = item
                 if rect.collidepoint(event.pos):
-                    origin = [x,y] #sets the origin to the spot which was clicked on
+                    origin = [x,y] #sets the origin to the spot which was clicked on 
                 x = (x + 1) % 9
             y = (y + 1) % 9
         return origin
-
+    
     def displayGrid(self, grid, board, displayShips):
         '''
         displayGrid Method
@@ -145,9 +136,9 @@ class Game:
         y = 0
         for row in grid: # this redraws each bot square, with the updated colors
             for item in row:
-                if not board.getTile(x, y).getTileAttacked():
-                    if displayShips: # if you want to show the ships on board
-                        if board.getTile(x, y).getTileItem() == "water":
+                if(not board.getTile(x, y).getTileAttacked()):
+                    if(displayShips): # if you want to show the ships on board
+                        if(board.getTile(x, y).getTileItem() == "water"):
                             item[1] = blue
                         else:
                             item[1] = grey
@@ -157,7 +148,7 @@ class Game:
                     item[1] = white
                 else:
                     item[1] = red
-
+                
                 rect, color = item
                 pygame.draw.rect(self.screen, color, rect)
                 x = (x + 1) % 9
@@ -173,13 +164,13 @@ class Game:
         '''
         shipNames = [Ship("dinghy", 1),Ship("gunboat", 2), Ship("submarine", 3), Ship("battleship", 4), Ship("carrier", 5)]
         directions = ["up", "right", "down", "left"]
-        dir = 0 #pylint: disable=redefined-builtin
+        dir = 0
         shipPlace = 0
         shipPositions = []
         font = pygame.font.Font('freesansbold.ttf', 17)
         self.displayGrid(self.topgrid, self.computer.getBoard(), True)
         while not shipPlace >= numShips:
-
+            
             text = font.render('Placing ship: ', False, white)
             self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
             rect = pygame.Rect(160, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
@@ -191,8 +182,8 @@ class Game:
 
             for event in pygame.event.get():
                 self.checkQuit(event)
-                if event.type == pygame.MOUSEBUTTONDOWN: #if mouse clicked
-
+                if event.type == pygame.MOUSEBUTTONDOWN: #if mouse clicked 
+                    
                     shipOrigin = self.scanGridClick(event, self.botgrid) #gets the square that you clicked on
                     if shipOrigin == [-1, -1]: #if you clicked outside grid
                         break
@@ -220,7 +211,7 @@ class Game:
 
                 elif event.type == pygame.KEYDOWN: #confirm placement
                     if event.key == pygame.K_RETURN:
-                        if shipPositions != []: #checks to make sure you placed a ship
+                        if(shipPositions != []): #checks to make sure you placed a ship
                             self.playerFleet += [shipNames[shipPlace]]
                             shipPositions = []
                             shipPlace += 1
@@ -230,13 +221,13 @@ class Game:
             #        rect, color = item
             #        pygame.draw.rect(self.screen, color, rect)
             self.displayGrid(self.botgrid, self.playerBoard, True) # updates bottom grid to show new values
-
+            
             pygame.display.flip() #displays the updated frame
 
         for ship in self.playerFleet:   # creates computer fleet and places ship on the computer board
             self.computer.shipPlace(ship)
             self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
-
+    
     def attackPhase(self):
         '''
         attackPhase Method
@@ -262,21 +253,27 @@ class Game:
                     x , y = self.scanGridClick(event, self.topgrid) #gets where clicked on topgrid
                     if(x == -1 and y == -1): #if you clicked outside of the board exit event loop
                         break
-                    if self.turn == "Player 1":
-                        if self.computer.attackTile(x, y): #attacks the computers board
+                    if(self.turn == "Player 1"):
+                        if(self.computer.attackTile(x, y)): #attacks the computers board
+                            hit = False
                             for ship in range(len(self.computerFleet)): #checks to see if you hit any of the ships
                                 if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName(): #compares tile name to fleet name
                                     self.computerFleet[ship].damageShip()       # if it matches damages that ship
+                                    hit = True
+                            self.swapTitles(hit)
                             self.swapBoards(self.playerBoard, self.computer.getBoard())
                             self.turn = "Player 2"
+                            
                     else:
-                        if self.playerBoard.attackTile(x, y):
+                        if(self.playerBoard.attackTile(x, y)):
                             for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
                                 if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
                                     self.playerFleet[ship].damageShip()
+                                    hit = True
+                            self.swapTitles(hit)
                             self.swapBoards(self.computer.getBoard(), self.playerBoard)
                             self.turn = "Player 1"
-
+                    
                     # x, y = 0, 0
                     # newTileAttacked = False
                     # while(not newTileAttacked): # ensures that the computer gets a new guess
@@ -285,41 +282,71 @@ class Game:
                     # for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
                     #     if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
                     #         self.playerFleet[ship].damageShip()
-
-
+                        
+            
             # self.displayGrid(self.botgrid,self.playerBoard, True) #displays complete bottom grid
             # self.displayGrid(self.topgrid,self.computer.getBoard(), True) #displays top grid with hidden ships
-
+            
             pygame.display.flip() #updates frame
 
             gameOver = True #checks if either fleet is completely dead
             for ship in self.computerFleet:
-                if not ship.isDead():
+                if(not ship.isDead()):
                     gameOver = False
-            if gameOver:
+            if(gameOver):
                 break
             gameOver = True
             for ship in self.playerFleet:
-                if not ship.isDead():
+                if(not ship.isDead()):
                     gameOver = False
-            if gameOver:
+            if(gameOver):
                 playerWin = False # if the player fleet is dead sets playerWin to false
                 break
 
         return playerWin # returns true if player won, false if computer won
 
     def swapBoards(self, currentBottom, currentTop):
-        '''
-        Future Docstring
-        '''
         self.displayGrid(self.botgrid, currentTop, True) #Set current top grid to display in bottom
         self.displayGrid(self.topgrid, currentBottom, False) #Opposite of above
 
+    def swapTitles(self, hit):
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        hitfont = pygame.font.Font('freesansbold.ttf', 50)
+        self.screen.fill(black)
+
+        if self.turn == "Player 1":
+            toptext = titlefont.render("Player 2's Turn!", False, (255, 255, 255))
+            lowertext = titlefont.render("press enter to continue", False, (255,255,255))
+        else:
+            toptext = titlefont.render("Player 1's Turn!", False, (255, 255, 255))
+            lowertext = titlefont.render("press enter to continue", False, (255,255,255))
+            
+
+        if hit:
+            hittext = hitfont.render("HIT!!", False, (255, 255, 255))
+        else:
+            hittext = hitfont.render("MISS", False, (255, 255, 255))
+        self.screen.blit(toptext, (self.SCREEN_WIDTH/2 - 85,self.SCREEN_HEIGHT/2 ))
+        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 - 110, self.SCREEN_HEIGHT/2 + 30))
+        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 - 65, self.SCREEN_HEIGHT/2 - 75))
+        pygame.display.flip()
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                self.checkQuit(event) #check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = True
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        if self.turn == "Player 1":
+                            self.fillCoordinates("Player 1", "Player 2")
+                        else:
+                            self.fillCoordinates("Player 2", "Player 1")
+
 
     def selectPlayers(self):
-        '''
-        Future Docstring
-        '''
         getNumberPlayers = False
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         numberPlayers = 0
@@ -342,13 +369,10 @@ class Game:
                         getNumberPlayers = False
                         self.screen.fill(black)
                         pygame.display.flip()
-                        return numberPlayers
+                        return(numberPlayers)
             pygame.display.flip()
 
     def chooseAIDifficulty(self):
-        '''
-        Future Docstring
-        '''
         self.screen.fill(black)
         getAIDifficulty = False
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
@@ -375,7 +399,7 @@ class Game:
                         getAIDifficulty = True
                         self.screen.fill(black)
                         pygame.display.flip()
-                        return difficultyConverter[aiDifficulty-1]
+                        return(difficultyConverter[aiDifficulty-1])
             pygame.display.flip()
 
     def game(self):
@@ -388,42 +412,50 @@ class Game:
         '''
         self.banger() # music
 
-        numPlayers = self.selectPlayers() # selects the number of players
+        #*****Member Variables of game*****#
+        self.playerBoard = Board()
+        self.playerFleet = []
+        #****************#
 
-        numShips = self.chooseNumShips() #asks user for the number of ships in the game
+        numPlayers = self.selectPlayers(); # selects the number of players
 
-        if numPlayers == 1:
+        numShips = self.chooseNumShips(); #asks user for the number of ships in the game
+
+        if (numPlayers == 1):
             # Computer Variables
             self.computerFleet = []
             aiDifficulty = self.chooseAIDifficulty()
             self.computer = Computer(aiDifficulty)
             # End Computer Variables
-        else:
-            self.turn = "Player 1"
+        
+        self.turn = "Player 1"
+
+        self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
+        self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
 
         playerWin = ""
 
-        self.fillCoordinates() # sets the UI
-
-        if numPlayers == 1:
+        if (numPlayers == 1):
+            self.fillCoordinates("Opponent Board", "Player Board") # sets the UI
             self.placeShipPhase(numShips) # places ship
             playerWin = self.attackPhase()
         # elif (numPlayers == 2):
+        #     self.fillCoordinates() # sets the UI
         #     self.placeShipPhase(numShips) # places ship
         #     playerWin = self.attackPhase()
         else:
             toptext = pygame.font.Font('freesansbold.ttf', 20).render("NO PLAYERS", False, (255,255,255))
             self.screen.blit(toptext, (20,20))
             return
-
+        
         quitGame = False
-        while not quitGame:
+        while not quitGame: 
             self.result(playerWin) #displays if you win or not
             for event in pygame.event.get():
                 self.checkQuit(event) #checks to see if you quit
                 if event.type == pygame.KEYDOWN: #confirm placement
                     if event.key == pygame.K_RETURN: # quits if hit enter
-                        quitGame = True
+                        quitGame = True 
 
     def banger (self):
         '''
@@ -445,7 +477,7 @@ class Game:
         #Attribution 4.0 International (CC BY 4.0)
         #https://creativecommons.org/licenses/by/4.0/
 
-    def fillCoordinates(self):
+    def fillCoordinates(self, topText, bottomText):
         '''
         fillCoordinates Method
         Parameters: N/A
@@ -460,8 +492,8 @@ class Game:
         left = 55
         font = pygame.font.Font('freesansbold.ttf', 20)
         titlefont = pygame.font.Font('freesansbold.ttf', 25)
-        toptext = titlefont.render('Opponent Board', False, (255,255,255))
-        bottext = titlefont.render('Player Board', False,(255,255,255))
+        toptext = titlefont.render(topText, False, (255,255,255))
+        bottext = titlefont.render(bottomText, False,(255,255,255))
         self.screen.blit(toptext,(130,15))
         self.screen.blit(bottext,(130,470))
 
@@ -510,9 +542,9 @@ class Game:
         Preconditions: game finished playing
         Postconditions: displays winner or loser screen
         '''
-        red = (255, 0, 0) # pylint: disable=redefined-outer-name        #makes red more vibrant
+        red = (255, 0, 0) # makes red more vibrant
         font = pygame.font.Font('freesansbold.ttf', 50)
-        if winner:
+        if winner == True:
             text = font.render('You Win!', True, black, red)
             textRect = text.get_rect()
             textRect.center = (int(self.SCREEN_WIDTH // 2), int(self.SCREEN_HEIGHT // 2))
