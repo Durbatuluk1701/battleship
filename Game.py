@@ -288,26 +288,24 @@ class Game:
                     if(x == -1 and y == -1):  # if you clicked outside of the board exit event loop
                         break
                     if(self.turn == "Player 1"):
-                        if(enemyBoard.attackTile(x, y)):  # attacks the computers board
-                            # checks to see if you hit any of the ships
-                            for ship in range(len(enemyFleet)):
-                                # compares tile name to fleet name
-                                if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
-                                    # if it matches damages that ship
-                                    enemyFleet[ship].damageShip()
-                            self.swapBoards(currentBoard,
-                                            enemyBoard)
-                            currentBoard, enemyBoard = enemyBoard, currentBoard
-                            currentFleet, enemyFleet = enemyFleet, currentFleet
+                        if(self.computer.attackTile(x, y)): #attacks the computers board
+                            hit = False
+                            for ship in range(len(self.computerFleet)): #checks to see if you hit any of the ships
+                                if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName(): #compares tile name to fleet name
+                                    self.computerFleet[ship].damageShip()       # if it matches damages that ship
+                                    hit = True
+                            self.swapTitles(hit)
+                            self.swapBoards(self.playerBoard, self.computer.getBoard())
                             self.turn = "Player 2"
+                            
                     else:
-                        if(currentBoard.attackTile(x, y)):
-                            # if it is a hit damages corresponding ship
-                            for ship in range(len(currentFleet)):
-                                if currentBoard.getTile(x, y).getTileItem() == currentFleet[ship].getName():
-                                    currentFleet[ship].damageShip()
-                            self.swapBoards(
-                                currentBoard, enemyBoard)
+                        if(self.playerBoard.attackTile(x, y)):
+                            for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
+                                if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
+                                    self.playerFleet[ship].damageShip()
+                                    hit = True
+                            self.swapTitles(hit)
+                            self.swapBoards(self.computer.getBoard(), self.playerBoard)
                             self.turn = "Player 1"
 
             pygame.display.flip()  # updates frame
@@ -347,6 +345,43 @@ class Game:
         self.displayGrid(self.botgrid, currentTop, True)
         self.displayGrid(self.topgrid, currentBottom,
                          False)  # Opposite of above
+
+    def swapTitles(self, hit):
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        hitfont = pygame.font.Font('freesansbold.ttf', 50)
+        self.screen.fill(black)
+
+        if self.turn == "Player 1":
+            toptext = titlefont.render("Player 2's Turn!", False, (255, 255, 255))
+            lowertext = titlefont.render("press enter to continue", False, (255,255,255))
+        else:
+            toptext = titlefont.render("Player 1's Turn!", False, (255, 255, 255))
+            lowertext = titlefont.render("press enter to continue", False, (255,255,255))
+            
+
+        if hit:
+            hittext = hitfont.render("HIT!!", False, (255, 255, 255))
+        else:
+            hittext = hitfont.render("MISS", False, (255, 255, 255))
+        self.screen.blit(toptext, (self.SCREEN_WIDTH/2 - 85,self.SCREEN_HEIGHT/2 ))
+        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 - 110, self.SCREEN_HEIGHT/2 + 30))
+        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 - 65, self.SCREEN_HEIGHT/2 - 75))
+        pygame.display.flip()
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                self.checkQuit(event) #check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = True
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        if self.turn == "Player 1":
+                            self.fillCoordinates("Player 1", "Player 2")
+                        else:
+                            self.fillCoordinates("Player 2", "Player 1")
+
 
     def selectPlayers(self):
         getNumberPlayers = False
@@ -435,17 +470,17 @@ class Game:
             aiDifficulty = self.chooseAIDifficulty()
             self.computer = Computer(aiDifficulty)
             # End Computer Variables
-        else:
-            self.turn = "Player 1"
-        self.topgrid = self.createDisplayBoard(
-            50, 40)  # creates the top "opponent" grid
-        self.botgrid = self.createDisplayBoard(
-            50, self.buffer)  # creates the bottom "player" grid
+        
+        self.turn = "Player 1"
+
+        self.topgrid = self.createDisplayBoard(50, 40)          #creates the top "opponent" grid
+        self.botgrid = self.createDisplayBoard(50, self.buffer) #creates the bottom "player" grid
+
         playerWin = ""
 
-        if (self.numPlayers == 1):
-            self.fillCoordinates()  # sets the UI
-            self.placeShipPhase("Player 1", self.numShips)  # places ship
+        if (numPlayers == 1):
+            self.fillCoordinates("Opponent Board", "Player Board") # sets the UI
+            self.placeShipPhase(numShips) # places ship
             playerWin = self.attackPhase()
         elif (self.numPlayers == 2):
             self.fillCoordinates()  # sets the UI
@@ -492,7 +527,7 @@ class Game:
         # Attribution 4.0 International (CC BY 4.0)
         # https://creativecommons.org/licenses/by/4.0/
 
-    def fillCoordinates(self):
+    def fillCoordinates(self, topText, bottomText):
         '''
         fillCoordinates Method
         Parameters: N/A
@@ -507,12 +542,13 @@ class Game:
         left = 55
         font = pygame.font.Font('freesansbold.ttf', 20)
         titlefont = pygame.font.Font('freesansbold.ttf', 25)
-        toptext = titlefont.render('Opponent Board', False, (255, 255, 255))
-        bottext = titlefont.render('Player Board', False, (255, 255, 255))
-        self.screen.blit(toptext, (130, 15))
-        self.screen.blit(bottext, (130, 470))
+        toptext = titlefont.render(topText, False, (255,255,255))
+        bottext = titlefont.render(bottomText, False,(255,255,255))
+        self.screen.blit(toptext,(130,15))
+        self.screen.blit(bottext,(130,470))
 
-        # for top board Y coordinates
+
+        #for top board Y coordinates
         for y in range(9):
             text = font.render(yCoordinates[y], True, white, black)
             textRect = text.get_rect()

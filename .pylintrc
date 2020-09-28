@@ -1,0 +1,10 @@
+[FORMAT]
+max-line-length=200
+
+[BASIC]
+variable-naming-style=any
+method-naming-style=any
+attribute-naming-style=any
+module-naming-style=any
+argument-naming-style=any
+attribute-naming-style=any
