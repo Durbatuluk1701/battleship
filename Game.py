@@ -27,6 +27,7 @@ class Game:
         Postconditions: Creates a valid screen, computer, player board, fleet for both computer and player
         '''
         #*****Initializes screen*****#
+        self.emptyBoard = Board()
         self.board_size = board_size
         self.cell_size = cell_size
         self.margin = margin
@@ -165,7 +166,7 @@ class Game:
                 x = (x + 1) % 9
             y = (y + 1) % 9
 
-    def placeShipPhase(self, numShips):
+    def placeShipPhase(self, player, numShips):
         '''
         placeShipPhase Method
         Parameters: numShips (the number of ships you want the player to place)
@@ -180,10 +181,10 @@ class Game:
         shipPlace = 0
         shipPositions = []
         font = pygame.font.Font('freesansbold.ttf', 17)
-        self.displayGrid(self.topgrid, self.computer.getBoard(), True)
+        self.displayGrid(self.topgrid, self.emptyBoard, True)
         while not shipPlace >= numShips:
 
-            text = font.render('Placing Player 1 Ship: ', False, white)
+            text = font.render('Placing ' + player + ' Ship: ', False, white)
             self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
             rect = pygame.Rect(160, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
             pygame.draw.rect(self.screen, black, rect)
@@ -203,14 +204,14 @@ class Game:
                         break
                     for coordinate in shipPositions:  # deletes old ship placement ****note for first ship ship positions is [] so it skips this step
                         # sets those spots to water
-                        self.player1Board.setTile(
+                        (self.player1Board if player == "Player 1" else self.player2Board).setTile(
                             coordinate[0], coordinate[1], "water")
 
                     shipPlaced = False
                     while not shipPlaced:
                         # everytime you click on a spot increments the direction to the next available spot
                         dir = (dir + 1) % 4
-                        shipPlaced = self.player1Board.placeShip(
+                        shipPlaced = (self.player1Board if player == "Player 1" else self.player2Board).placeShip(
                             directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
                         shipPositions = [shipOrigin]
                     if directions[dir] == "up":
@@ -235,7 +236,8 @@ class Game:
                 elif event.type == pygame.KEYDOWN:  # confirm placement
                     if event.key == pygame.K_RETURN:
                         if(shipPositions != []):  # checks to make sure you placed a ship
-                            self.player1Fleet += [shipNames[shipPlace]]
+                            fleet = self.player1Fleet if player == "Player 1" else self.player2Fleet
+                            fleet += [shipNames[shipPlace]]
                             shipPositions = []
                             shipPlace += 1
             # draw all in every loop
@@ -248,96 +250,10 @@ class Game:
 
             pygame.display.flip()  # displays the updated frame
 
-        for ship in self.player1Fleet:   # creates computer fleet and places ship on the computer board
-            self.computer.shipPlace(ship)
-            self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
-
-    def placeShipPhase2(self, numShips):
-        '''
-        placeShipPhase Method
-        Parameters: numShips (the number of ships you want the player to place)
-        Returns: N/A
-        Preconditions: valid player and computer grid
-        Postconditions: both players' boards have placed ships, players' fleets have been updated to contain the ships they placed
-        '''
-        shipNames = [Ship("dinghy", 1), Ship("gunboat", 2), Ship(
-            "submarine", 3), Ship("battleship", 4), Ship("carrier", 5)]
-        directions = ["up", "right", "down", "left"]
-        dir = 0
-        shipPlace = 0
-        shipPositions = []
-        font = pygame.font.Font('freesansbold.ttf', 17)
-        self.displayGrid(self.topgrid, self.computer.getBoard(), True)
-        while not shipPlace >= numShips:
-
-            text = font.render('Placing Player 2 Ship: ', False, white)
-            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
-            rect = pygame.Rect(160, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
-            pygame.draw.rect(self.screen, black, rect)
-            text = font.render(shipNames[shipPlace].getName(), False, white)
-            self.screen.blit(text, (165, int(self.SCREEN_HEIGHT / 2) - 25))
-            text = font.render(
-                "click to place, enter to confirm", False, white)
-            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 5))
-
-            for event in pygame.event.get():
-                self.checkQuit(event)
-                if event.type == pygame.MOUSEBUTTONDOWN:  # if mouse clicked
-
-                    # gets the square that you clicked on
-                    shipOrigin = self.scanGridClick(event, self.botgrid)
-                    if shipOrigin == [-1, -1]:  # if you clicked outside grid
-                        break
-                    for coordinate in shipPositions:  # deletes old ship placement ****note for first ship ship positions is [] so it skips this step
-                        # sets those spots to water
-                        self.player2Board.setTile(
-                            coordinate[0], coordinate[1], "water")
-
-                    shipPlaced = False
-                    while not shipPlaced:
-                        # everytime you click on a spot increments the direction to the next available spot
-                        dir = (dir + 1) % 4
-                        shipPlaced = self.player2Board.placeShip(
-                            directions[dir], shipNames[shipPlace], shipOrigin[0], shipOrigin[1])
-                        shipPositions = [shipOrigin]
-                    if directions[dir] == "up":
-                        for i in range(shipNames[shipPlace].getHealth()):
-                            shipPositions = shipPositions + \
-                                [[shipPositions[0][0], shipPositions[0][1] - i]]
-                    if directions[dir] == "down":
-                        for i in range(shipNames[shipPlace].getHealth()):
-                            shipPositions = shipPositions + \
-                                [[shipPositions[0][0], shipPositions[0][1] + i]]
-                    if directions[dir] == "right":
-                        for i in range(shipNames[shipPlace].getHealth()):
-                            shipPositions = shipPositions + \
-                                [[shipPositions[0][0] + i, shipPositions[0][1]]]
-                    if directions[dir] == "left":
-                        for i in range(shipNames[shipPlace].getHealth()):
-                            shipPositions = shipPositions + \
-                                [[shipPositions[0][0] - i, shipPositions[0][1]]]
-                    # in placing a ship, shipPositions has a duplicate of the  origin spot, so pop that off
-                    shipPositions.pop(0)
-
-                elif event.type == pygame.KEYDOWN:  # confirm placement
-                    if event.key == pygame.K_RETURN:
-                        if(shipPositions != []):  # checks to make sure you placed a ship
-                            self.player2Fleet += [shipNames[shipPlace]]
-                            shipPositions = []
-                            shipPlace += 1
-            # draw all in every loop
-            # for row in topgrid: # this redraws each top square, with the updated colors
-            #    for item in row:
-            #        rect, color = item
-            #        pygame.draw.rect(self.screen, color, rect)
-            # updates bottom grid to show new values
-            self.displayGrid(self.botgrid, self.player2Board, True)
-
-            pygame.display.flip()  # displays the updated frame
-
-        for ship in self.player2Fleet:   # creates computer fleet and places ship on the computer board
-            self.computer.shipPlace(ship)
-            self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
+        if (self.numPlayers == 1):
+            for ship in self.player1Fleet:   # creates computer fleet and places ship on the computer board
+                self.computer.shipPlace(ship)
+                self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
 
     def attackPhase(self):
         '''
@@ -350,6 +266,11 @@ class Game:
         gameOver = False
         playerWin = True
         font = pygame.font.Font('freesansbold.ttf', 17)
+        currentBoard = self.player1Board
+        currentFleet = self.player1Fleet
+        enemyBoard = self.player2Board if self.numPlayers == 2 else self.computer.getBoard()
+        enemyFleet = self.player2Fleet if self.numPlayers == 2 else self.computerFleet
+
         while not gameOver:
 
             rect = pygame.Rect(0, int(self.SCREEN_HEIGHT / 2 - 25), 400, 45)
@@ -367,53 +288,57 @@ class Game:
                     if(x == -1 and y == -1):  # if you clicked outside of the board exit event loop
                         break
                     if(self.turn == "Player 1"):
-                        if(self.computer.attackTile(x, y)):  # attacks the computers board
+                        if(enemyBoard.attackTile(x, y)):  # attacks the computers board
                             # checks to see if you hit any of the ships
-                            for ship in range(len(self.computerFleet)):
+                            for ship in range(len(enemyFleet)):
                                 # compares tile name to fleet name
-                                if self.computer.getBoard().getTile(x, y).getTileItem() == self.computerFleet[ship].getName():
+                                if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                     # if it matches damages that ship
-                                    self.computerFleet[ship].damageShip()
-                            self.swapBoards(self.playerBoard,
-                                            self.computer.getBoard())
+                                    enemyFleet[ship].damageShip()
+                            self.swapBoards(currentBoard,
+                                            enemyBoard)
+                            currentBoard, enemyBoard = enemyBoard, currentBoard
+                            currentFleet, enemyFleet = enemyFleet, currentFleet
                             self.turn = "Player 2"
                     else:
-                        if(self.playerBoard.attackTile(x, y)):
+                        if(currentBoard.attackTile(x, y)):
                             # if it is a hit damages corresponding ship
-                            for ship in range(len(self.player1Fleet)):
-                                if self.playerBoard.getTile(x, y).getTileItem() == self.player1Fleet[ship].getName():
-                                    self.player1Fleet[ship].damageShip()
+                            for ship in range(len(currentFleet)):
+                                if currentBoard.getTile(x, y).getTileItem() == currentFleet[ship].getName():
+                                    currentFleet[ship].damageShip()
                             self.swapBoards(
-                                self.computer.getBoard(), self.playerBoard)
+                                currentBoard, enemyBoard)
                             self.turn = "Player 1"
-
-                    # x, y = 0, 0
-                    # newTileAttacked = False
-                    # while(not newTileAttacked): # ensures that the computer gets a new guess
-                    #     x, y = self.computer.shipGuess()
-                    #     newTileAttacked = self.playerBoard.attackTile(x, y) #attack tile returns false if you have already attacked that tile
-                    # for ship in range(len(self.playerFleet)): #if it is a hit damages corresponding ship
-                    #     if self.playerBoard.getTile(x, y).getTileItem() == self.playerFleet[ship].getName():
-                    #         self.playerFleet[ship].damageShip()
-
-            # self.displayGrid(self.botgrid,self.playerBoard, True) #displays complete bottom grid
-            # self.displayGrid(self.topgrid,self.computer.getBoard(), True) #displays top grid with hidden ships
 
             pygame.display.flip()  # updates frame
 
             gameOver = True  # checks if either fleet is completely dead
-            for ship in self.computerFleet:
-                if(not ship.isDead()):
-                    gameOver = False
-            if(gameOver):
-                break
-            gameOver = True
-            for ship in self.player1Fleet:
-                if(not ship.isDead()):
-                    gameOver = False
-            if(gameOver):
-                playerWin = False  # if the player fleet is dead sets playerWin to false
-                break
+            if (self.numPlayers == 1):
+                for ship in self.computerFleet:
+                    if(not ship.isDead()):
+                        gameOver = False
+                if(gameOver):
+                    playerWin = "Player 1"
+                    break
+                for ship in self.player1Fleet:
+                    if(not ship.isDead()):
+                        gameOver = False
+                if(gameOver):
+                    playerWin = "Computer"  # if the player fleet is dead sets playerWin to false
+                    break
+            else:
+                for ship in self.player1Fleet:
+                    if(not ship.isDead()):
+                        gameOver = False
+                if(gameOver):
+                    playerWin = "Player 2"  # if the player fleet is dead sets playerWin to false
+                    break
+                for ship in self.player2Fleet:
+                    if (not ship.isDead()):
+                        gameOver = False
+                if (gameOver):
+                    playerWin = "Player 1"
+                    break
 
         return playerWin  # returns true if player won, false if computer won
 
@@ -499,11 +424,12 @@ class Game:
         self.player1Fleet = []
         #****************#
 
-        numPlayers = self.selectPlayers()  # selects the number of players
+        self.numPlayers = self.selectPlayers()  # selects the number of players
 
-        numShips = self.chooseNumShips()  # asks user for the number of ships in the game
+        # asks user for the number of ships in the game
+        self.numShips = self.chooseNumShips()
 
-        if (numPlayers == 1):
+        if (self.numPlayers == 1):
             # Computer Variables
             self.computerFleet = []
             aiDifficulty = self.chooseAIDifficulty()
@@ -511,25 +437,25 @@ class Game:
             # End Computer Variables
         else:
             self.turn = "Player 1"
-            self.topgrid = self.createDisplayBoard(
-                50, 40)  # creates the top "opponent" grid
-            self.botgrid = self.createDisplayBoard(
-                50, self.buffer)  # creates the bottom "player" grid
-            playerWin = ""
+        self.topgrid = self.createDisplayBoard(
+            50, 40)  # creates the top "opponent" grid
+        self.botgrid = self.createDisplayBoard(
+            50, self.buffer)  # creates the bottom "player" grid
+        playerWin = ""
 
-        if (numPlayers == 1):
+        if (self.numPlayers == 1):
             self.fillCoordinates()  # sets the UI
-            self.placeShipPhase(numShips)  # places ship
+            self.placeShipPhase("Player 1", self.numShips)  # places ship
             playerWin = self.attackPhase()
-        elif (numPlayers == 2):
-            self.computerFleet = []
-            self.computer = Computer("null")
+        elif (self.numPlayers == 2):
             self.fillCoordinates()  # sets the UI
-            self.placeShipPhase(numShips)  # places ships for player 1
+            # places ships for player 1
+            self.placeShipPhase("Player 1", self.numShips)
             self.player2Board = Board()
             self.player2Fleet = []
             self.fillCoordinates()  # sets the UI
-            self.placeShipPhase2(numShips)  # places ships for player 2
+            # places ships for player 2
+            self.placeShipPhase("Player 2", self.numShips)
             playerWin = self.attackPhase()
         else:
             toptext = pygame.font.Font('freesansbold.ttf', 20).render(
@@ -632,18 +558,11 @@ class Game:
         '''
         red = (255, 0, 0)  # makes red more vibrant
         font = pygame.font.Font('freesansbold.ttf', 50)
-        if winner == True:
-            text = font.render('You Win!', True, black, red)
-            textRect = text.get_rect()
-            textRect.center = (int(self.SCREEN_WIDTH // 2),
-                               int(self.SCREEN_HEIGHT // 2))
-            self.screen.blit(text, textRect)
-        else:
-            text = font.render('You Lose!', True, black, red)
-            textRect = text.get_rect()
-            textRect.center = (int(self.SCREEN_WIDTH // 2),
-                               int(self.SCREEN_HEIGHT // 2))
-            self.screen.blit(text, textRect)
+        text = font.render(winner + ' Wins!', True, black, red)
+        textRect = text.get_rect()
+        textRect.center = (int(self.SCREEN_WIDTH // 2),
+                           int(self.SCREEN_HEIGHT // 2))
+        self.screen.blit(text, textRect)
         font = pygame.font.Font('freesansbold.ttf', 20)
         text = font.render('Press enter to quit', True, black, red)
         textRect = text.get_rect()
