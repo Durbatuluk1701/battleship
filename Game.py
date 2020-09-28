@@ -184,12 +184,17 @@ class Game:
         self.displayGrid(self.topgrid, self.emptyBoard, True)
         while not shipPlace >= numShips:
 
-            text = font.render('Placing ' + player + ' Ship: ', False, white)
-            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
-            rect = pygame.Rect(160, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
+            rect = pygame.Rect(
+                175, int(self.SCREEN_HEIGHT / 2) - 25, 200, 20)
             pygame.draw.rect(self.screen, black, rect)
+
+            self.displayGrid(self.botgrid, (self.player1Board if player ==
+                                            "Player 1" else self.player2Board), True)
+            text = font.render(player + ' - Ship: ', False, white)
+            self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 25))
             text = font.render(shipNames[shipPlace].getName(), False, white)
-            self.screen.blit(text, (165, int(self.SCREEN_HEIGHT / 2) - 25))
+            self.screen.blit(text, (175, int(self.SCREEN_HEIGHT / 2) - 25))
+            pygame.display.flip()  # displays the updated frame
             text = font.render(
                 "click to place, enter to confirm", False, white)
             self.screen.blit(text, (50, int(self.SCREEN_HEIGHT / 2) - 5))
@@ -200,7 +205,8 @@ class Game:
 
                     # gets the square that you clicked on
                     shipOrigin = self.scanGridClick(event, self.botgrid)
-                    if shipOrigin == [-1, -1]:  # if you clicked outside grid
+                    # if you clicked outside grid
+                    if shipOrigin == [-1, -1] or (self.player1Board if player == "Player 1" else self.player2Board).getTile(shipOrigin[0], shipOrigin[1]).getTileItem() in map(lambda val: val.getName(), (self.player1Fleet if player == "Player 1" else self.player2Fleet)):
                         break
                     for coordinate in shipPositions:  # deletes old ship placement ****note for first ship ship positions is [] so it skips this step
                         # sets those spots to water
@@ -240,20 +246,14 @@ class Game:
                             fleet += [shipNames[shipPlace]]
                             shipPositions = []
                             shipPlace += 1
-            # draw all in every loop
-            # for row in topgrid: # this redraws each top square, with the updated colors
-            #    for item in row:
-            #        rect, color = item
-            #        pygame.draw.rect(self.screen, color, rect)
-            # updates bottom grid to show new values
-            self.displayGrid(self.botgrid, self.player1Board, True)
-
-            pygame.display.flip()  # displays the updated frame
 
         if (self.numPlayers == 1):
             for ship in self.player1Fleet:   # creates computer fleet and places ship on the computer board
                 self.computer.shipPlace(ship)
                 self.computerFleet += [Ship(ship.getName(), ship.getHealth())]
+        else:
+            self.swapBoards((self.player1Board if player == "Player 1" else self.player2Board),
+                            (self.player2Board if player == "Player 1" else self.player1Board))
 
     def attackPhase(self):
         '''
@@ -309,6 +309,13 @@ class Game:
                         self.displayGrid(self.topgrid, enemyBoard, True)
                         pygame.display.flip()  # updates frame
                         return self.turn
+                    if (hit):
+                        self.showHit()
+                        self.displayGrid(self.botgrid, currentBoard, True)
+                        # Opposite of above
+                        self.displayGrid(self.topgrid, enemyBoard, False)
+                        pygame.display.flip()  # updates frame
+                        break
                     if (self.numPlayers == 1):
                         x, y = 0, 0
                         currentBoard, enemyBoard = enemyBoard, currentBoard
@@ -329,7 +336,7 @@ class Game:
                     else:
                         self.swapTitles(hit)
                         self.swapBoards(currentBoard, enemyBoard)
-                        self.turn = "Player 2" if self.turn == "Player 1" else "Player 2"
+                        self.turn = "Player 2" if self.turn == "Player 1" else "Player 1"
                     currentBoard, enemyBoard = enemyBoard, currentBoard
                     currentFleet, enemyFleet = enemyFleet, currentFleet
 
@@ -356,6 +363,34 @@ class Game:
         self.displayGrid(self.topgrid, currentBottom,
                          False)  # Opposite of above
 
+    def showHit(self):
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        hitfont = pygame.font.Font('freesansbold.ttf', 50)
+        self.screen.fill(black)
+
+        hittext = hitfont.render("HIT!!", False, (255, 255, 255))
+        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
+                                   65, int(self.SCREEN_HEIGHT/2) - 75))
+        lowertext = titlefont.render(
+            "press enter to continue", False, (255, 255, 255))
+        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
+                                     110, int(self.SCREEN_HEIGHT/2) + 30))
+        pygame.display.flip()
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                self.checkQuit(event)  # check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = True
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        if self.turn == "Player 2":
+                            self.fillCoordinates("Player 1", "Player 2")
+                        else:
+                            self.fillCoordinates("Player 2", "Player 1")
+
     def swapTitles(self, hit):
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
@@ -377,11 +412,11 @@ class Game:
         else:
             hittext = hitfont.render("MISS", False, (255, 255, 255))
         self.screen.blit(toptext, (self.SCREEN_WIDTH /
-                                   2 - 85, self.SCREEN_HEIGHT/2))
+                                   2 - 85, int(self.SCREEN_HEIGHT/2)))
         self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
-                                     110, self.SCREEN_HEIGHT/2 + 30))
+                                     110, int(self.SCREEN_HEIGHT/2) + 30))
         self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
-                                   65, self.SCREEN_HEIGHT/2 - 75))
+                                   65, int(self.SCREEN_HEIGHT/2) - 75))
         pygame.display.flip()
         done = False
         while not done:
@@ -497,16 +532,18 @@ class Game:
 
         if (self.numPlayers == 1):
             self.fillCoordinates(
-                "Opponent Board", "Player Board")  # sets the UI
+                "Computer Board", "Player 1 Board")  # sets the UI
             self.placeShipPhase("Player 1", self.numShips)  # places ship
             playerWin = self.attackPhase()
         elif (self.numPlayers == 2):
-            self.fillCoordinates()  # sets the UI
-            # places ships for player 1
-            self.placeShipPhase("Player 1", self.numShips)
             self.player2Board = Board()
             self.player2Fleet = []
-            self.fillCoordinates()  # sets the UI
+            self.fillCoordinates(
+                "Player 2 Board", "Player 1 Board")  # sets the UI
+            # places ships for player 1
+            self.placeShipPhase("Player 1", self.numShips)
+            self.fillCoordinates(
+                "Player 1 Board", "Player 2 Board")  # sets the UI
             # places ships for player 2
             self.placeShipPhase("Player 2", self.numShips)
             playerWin = self.attackPhase()
