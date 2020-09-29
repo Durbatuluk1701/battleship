@@ -7,6 +7,9 @@ from Tile import Tile
 import math
 #from Gameflow import Gameflow
 
+#*****Global Variable for the AI********#
+ArrayofShips = []
+#****************************************#
 #**** Colors *****#
 white = (255, 255, 255)
 blue = (52, 196, 206)
@@ -244,9 +247,11 @@ class Game:
                         if(shipPositions != []):  # checks to make sure you placed a ship
                             fleet = self.player1Fleet if player == "Player 1" else self.player2Fleet
                             fleet += [shipNames[shipPlace]]
+                            ArrayofShips.append(shipPositions)
+                            print(len(ArrayofShips))
+                            print(ArrayofShips) #Found the Coordinates1!!!!!!!!!!!!!
                             shipPositions = []
                             shipPlace += 1
-
         if (self.numPlayers == 1):
             for ship in self.player1Fleet:   # creates computer fleet and places ship on the computer board
                 self.computer.shipPlace(ship)
@@ -254,6 +259,9 @@ class Game:
         else:
             self.swapBoards((self.player1Board if player == "Player 1" else self.player2Board),
                             (self.player2Board if player == "Player 1" else self.player1Board))
+        
+
+        
 
     def attackPhase(self):
         '''
@@ -322,7 +330,7 @@ class Game:
                         currentFleet, enemyFleet = enemyFleet, currentFleet
                         newTileAttacked = False
                         while(not newTileAttacked):  # ensures that the computer gets a new guess
-                            x, y = self.computer.shipGuess()
+                            x, y = self.computer.shipGuess(ArrayofShips)
                             # attack tile returns false if you have already attacked that tile
                             newTileAttacked = enemyBoard.attackTile(x, y)
                         # if it is a hit damages corresponding ship
