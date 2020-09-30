@@ -304,12 +304,6 @@ class Game:
                     for ship in enemyFleet:
                         if(not ship.isDead()):
                             gameOver = False
-                    if(gameOver):
-                        self.displayGrid(self.botgrid, currentBoard, True)
-                        # Opposite of above
-                        self.displayGrid(self.topgrid, enemyBoard, True)
-                        pygame.display.flip()  # updates frame
-                        return self.turn
                     if (hit):
                         self.showHit()
                         self.displayGrid(self.botgrid, currentBoard, True)
@@ -317,6 +311,15 @@ class Game:
                         self.displayGrid(self.topgrid, enemyBoard, False)
                         pygame.display.flip()  # updates frame
                         break
+                    else:
+                        self.showMiss()
+                    if(gameOver):
+                        self.displayGrid(self.botgrid, currentBoard, True)
+                        # Opposite of above
+                        self.displayGrid(self.topgrid, enemyBoard, True)
+                        pygame.display.flip()  # updates frame
+                        return self.turn
+                    # Computer Only AI Moves
                     if (self.numPlayers == 1):
                         x, y = 0, 0
                         currentBoard, enemyBoard = enemyBoard, currentBoard
@@ -365,12 +368,41 @@ class Game:
                          False)  # Opposite of above
 
     def showHit(self):
-        playsound("hitExplosion.mp3", False)
+        playsound("Sounds/hitExplosion.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
 
         hittext = hitfont.render("HIT!!", False, (255, 255, 255))
+        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
+                                   65, int(self.SCREEN_HEIGHT/2) - 75))
+        lowertext = titlefont.render(
+            "press enter to continue", False, (255, 255, 255))
+        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
+                                     110, int(self.SCREEN_HEIGHT/2) + 30))
+        pygame.display.flip()
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                self.checkQuit(event)  # check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = True
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        if self.turn == "Player 2":
+                            self.fillCoordinates("Player 1", "Player 2")
+                        else:
+                            self.fillCoordinates("Player 2", "Player 1")
+
+    def showMiss(self):
+        playsound("Sounds/missSplash.mp3", False)
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        hitfont = pygame.font.Font('freesansbold.ttf', 50)
+        self.screen.fill(black)
+
+        hittext = hitfont.render("MISS", False, (255, 0, 0))
         self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
                                    65, int(self.SCREEN_HEIGHT/2) - 75))
         lowertext = titlefont.render(
@@ -664,7 +696,7 @@ class Game:
         pygame.display.flip()
 
 
-playsound("metal.mp3", False)
+playsound("Sounds/metal.mp3", False)
 mygame = Game()
 mygame.game()
 pygame.quit()
