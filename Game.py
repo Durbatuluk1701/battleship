@@ -4,6 +4,7 @@ from Computer import Computer
 from Board import Board
 from Ship import Ship
 from Tile import Tile
+from playsound import playsound
 import math
 #from Gameflow import Gameflow
 
@@ -364,6 +365,7 @@ class Game:
                          False)  # Opposite of above
 
     def showHit(self):
+        playsound("hitExplosion.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
@@ -662,6 +664,7 @@ class Game:
         pygame.display.flip()
 
 
+playsound("metal.mp3", False)
 mygame = Game()
 mygame.game()
 pygame.quit()
