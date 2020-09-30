@@ -285,6 +285,7 @@ class Game:
 
             for event in pygame.event.get():
                 self.checkQuit(event)  # checks to see if exited game
+                sunk = False
 
                 if event.type == pygame.MOUSEBUTTONDOWN:  # if clicked
                     # gets where clicked on topgrid
@@ -299,6 +300,8 @@ class Game:
                             if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                 # if it matches damages that ship
                                 enemyFleet[ship].damageShip()
+                                if enemyFleet[ship].isDead():
+                                    sunk = True
                                 hit = True
                     gameOver = True  # checks if either fleet is completely dead
                     for ship in enemyFleet:
@@ -306,6 +309,8 @@ class Game:
                             gameOver = False
                     if (hit):
                         self.showHit()
+                        if (sunk):
+                            self.sinkShip()
                         self.displayGrid(self.botgrid, currentBoard, True)
                         # Opposite of above
                         self.displayGrid(self.topgrid, enemyBoard, False)
@@ -373,12 +378,12 @@ class Game:
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
 
-        hittext = hitfont.render("HIT!!", False, (255, 255, 255))
-        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
+        hittext = hitfont.render("HIT!!", False, (255, 0, 0))
+        self.screen.blit(hittext, (int(self.SCREEN_WIDTH/2) -
                                    65, int(self.SCREEN_HEIGHT/2) - 75))
         lowertext = titlefont.render(
             "press enter to continue", False, (255, 255, 255))
-        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
+        self.screen.blit(lowertext, (int(self.SCREEN_WIDTH/2) -
                                      110, int(self.SCREEN_HEIGHT/2) + 30))
         pygame.display.flip()
         done = False
@@ -403,11 +408,40 @@ class Game:
         self.screen.fill(black)
 
         hittext = hitfont.render("MISS", False, (255, 0, 0))
-        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
+        self.screen.blit(hittext, (int(self.SCREEN_WIDTH/2) -
                                    65, int(self.SCREEN_HEIGHT/2) - 75))
         lowertext = titlefont.render(
             "press enter to continue", False, (255, 255, 255))
-        self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
+        self.screen.blit(lowertext, (int(self.SCREEN_WIDTH/2) -
+                                     110, int(self.SCREEN_HEIGHT/2) + 30))
+        pygame.display.flip()
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                self.checkQuit(event)  # check if user exits
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        done = True
+                        self.screen.fill(black)
+                        pygame.display.flip()
+                        if self.turn == "Player 2":
+                            self.fillCoordinates("Player 1", "Player 2")
+                        else:
+                            self.fillCoordinates("Player 2", "Player 1")
+
+    def sinkShip(self):
+        playsound("Sounds/shipSunk.mp3", False)
+        titlefont = pygame.font.Font('freesansbold.ttf', 20)
+        hitfont = pygame.font.Font('freesansbold.ttf', 50)
+        self.screen.fill(black)
+
+        hittext = hitfont.render("SHIP SUNK!!!", False, (255, 0, 0))
+        self.screen.blit(hittext, (int(self.SCREEN_WIDTH/2) -
+                                   155, int(self.SCREEN_HEIGHT/2) - 75))
+        lowertext = titlefont.render(
+            "press enter to continue", False, (255, 255, 255))
+        self.screen.blit(lowertext, (int(self.SCREEN_WIDTH/2) -
                                      110, int(self.SCREEN_HEIGHT/2) + 30))
         pygame.display.flip()
         done = False
@@ -441,16 +475,10 @@ class Game:
             lowertext = titlefont.render(
                 "press enter to continue", False, (255, 255, 255))
 
-        if hit:
-            hittext = hitfont.render("HIT!!", False, (255, 255, 255))
-        else:
-            hittext = hitfont.render("MISS", False, (255, 255, 255))
         self.screen.blit(toptext, (self.SCREEN_WIDTH /
                                    2 - 85, int(self.SCREEN_HEIGHT/2)))
         self.screen.blit(lowertext, (self.SCREEN_WIDTH/2 -
                                      110, int(self.SCREEN_HEIGHT/2) + 30))
-        self.screen.blit(hittext, (self.SCREEN_WIDTH/2 -
-                                   65, int(self.SCREEN_HEIGHT/2) - 75))
         pygame.display.flip()
         done = False
         while not done:
@@ -536,8 +564,6 @@ class Game:
         Preconditions: Valid screen created (created in constructor)
         Postconditions: Plays battleship until one person wins then waits to exit
         '''
-        self.banger()  # music
-
         #*****Member Variables of game*****#
         self.player1Board = Board()
         self.player1Fleet = []
@@ -595,26 +621,6 @@ class Game:
                 if event.type == pygame.KEYDOWN:  # confirm placement
                     if event.key == pygame.K_RETURN:  # quits if hit enter
                         quitGame = True
-
-    def banger(self):
-        '''
-        banger Method
-        Parameters: N/A
-        Returns: N/A
-        Preconditions: N/A
-        Postconditions: plays banger music
-        '''
-
-        # pygame.mixer.init()
-        #sound = pygame.mixer.Sound("metal.mp3")
-        # sound.set_volume(.5)
-        # pygame.mixer.music.load("metal.mp3")
-        # pygame.mixer.music.play(loops=-1)
-
-        # Metal by Alexander Nakarada | https://www.serpentsoundstudios.com
-        # Music promoted by https://www.free-stock-music.com
-        # Attribution 4.0 International (CC BY 4.0)
-        # https://creativecommons.org/licenses/by/4.0/
 
     def fillCoordinates(self, topText, bottomText):
         '''
