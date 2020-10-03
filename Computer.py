@@ -102,8 +102,8 @@ class Computer:
             row = random.randint(0,8)
             validCoord = False
             if (self.hit):
-                self.direction = self.directionTranslation[self.direction]
                 while (not validCoord):
+                    self.direction = self.directionTranslation[self.direction]
                     if (self.direction == "up"):
                         self.hitCoord = [self.hitCoord[0], self.hitCoord[1] + 1]
                     if (self.direction == "down"):

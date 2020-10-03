@@ -343,16 +343,16 @@ class Game:
                             if(self.computer.getDifficulty() == "Hard"):
                                 temp[0] = list(filter(None,temp[0]))
                                 temp = list(filter(None,temp))
-                            if(self.computer.getDifficulty() == "Medium"):
-                                    print("after pass back",temp)
                             # attack tile returns false if you have already attacked that tile
                             newTileAttacked = enemyBoard.attackTile(x, y)
                         # if it is a hit damages corresponding ship
                         for ship in range(len(enemyFleet)):
                             if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                 enemyFleet[ship].damageShip()
+                                print("Hitting at ", x, y)
                                 self.computer.setHit(x, y)
                                 if enemyFleet[ship].isDead():
+                                    print("Computer Sunk Ship")
                                     self.computer.unSetHit()
                         self.displayGrid(self.botgrid, enemyBoard, True)
                         # Opposite of above
