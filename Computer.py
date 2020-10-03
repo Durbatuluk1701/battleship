@@ -12,7 +12,18 @@ class Computer:
         Postconditions: A Computer object is created with a default Board object within it.
         """
         self.__board__ = Board()
-        self.difficulty = difficulty
+        self.difficulty = difficulty 
+
+    def getDifficulty(self):
+        """        
+        Get difficulty Method 
+        Parameters: n/a
+        Returns: n/a
+        Preconditions: n/a
+        Postconditions: Returns the String diffculty 
+        """
+        return (self.difficulty)
+
     def getBoard(self):
         """
         Get Board Method
@@ -53,7 +64,7 @@ class Computer:
         Postconditions: The Tile of the Board at the specified coordinates is attacked, if possible.
         """
         return(self.__board__.attackTile(xCoord, yCoord))
-    def shipGuess(self):
+    def shipGuess(self,arrship):
         """
         Ship Guess Method
         Parameters: n/a
@@ -63,7 +74,24 @@ class Computer:
         """
         # generate random x,y coordinates
         # attack those coords, if possible
-        
-        col = random.randint(0,8)
-        row = random.randint(0,8)
-        return([row, col])
+        if(self.difficulty == "Hard"):
+            #print("Inside Computer.py = " , arrship)
+            if (len(arrship) != 0):
+                col = arrship[0][0][1]
+                row = arrship[0][0][0]
+                print("col" , col)
+                print("row" , row)
+                arrship[0][0].pop(0)
+                arrship[0][0].pop(0)
+                return([row, col])
+            else: 
+                print("Nothing left")
+        elif(self.difficulty == "Medium"):
+            col = random.randint(0,8)
+            row = random.randint(0,8)
+            return([row, col])
+        elif(self.difficulty == "Easy"):   #Is already completed 
+            col = random.randint(0,8)
+            row = random.randint(0,8)
+            return([row, col])
+
