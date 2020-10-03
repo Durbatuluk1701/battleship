@@ -1,2 +1,6 @@
 For this project we used the Pygame library:
 https://www.pygame.org
+
+For this project, we also used the playsound library:
+installed via 'pip install playsound'
+https://pypi.org/project/playsound/
