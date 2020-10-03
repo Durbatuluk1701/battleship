@@ -9,7 +9,6 @@ import math
 
 #*****Global Variable for the AI********#
 ArrayofShips = []
-temp = []
 #****************************************#
 #**** Colors *****#
 white = (255, 255, 255)
@@ -370,9 +369,6 @@ class Game:
                 playerWin = self.turn
 
         return playerWin  # returns true if player won, false if computer won
-
-    def filterArray(self,arrship):
-        print("hi")
 
 
     def swapBoards(self, currentBottom, currentTop):
