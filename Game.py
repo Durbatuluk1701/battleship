@@ -9,6 +9,7 @@ import math
 
 #*****Global Variable for the AI********#
 ArrayofShips = []
+temp = []
 #****************************************#
 #**** Colors *****#
 white = (255, 255, 255)
@@ -271,6 +272,8 @@ class Game:
         Preconditions: valid player and computer grid and fleet with placed ships
         Postconditions: players take turns attacking until all the ships of one board are sunk, then exits
         '''
+        temp = ArrayofShips
+
         gameOver = False
         playerWin = True
         font = pygame.font.Font('freesansbold.ttf', 17)
@@ -330,7 +333,10 @@ class Game:
                         currentFleet, enemyFleet = enemyFleet, currentFleet
                         newTileAttacked = False
                         while(not newTileAttacked):  # ensures that the computer gets a new guess
-                            x, y = self.computer.shipGuess(ArrayofShips)
+                            x, y = self.computer.shipGuess(temp)
+                            if(self.computer.getDifficulty() == "Hard"):
+                                temp[0] = list(filter(None,temp[0]))
+                                temp = list(filter(None,temp))
                             # attack tile returns false if you have already attacked that tile
                             newTileAttacked = enemyBoard.attackTile(x, y)
                         # if it is a hit damages corresponding ship
@@ -364,6 +370,10 @@ class Game:
                 playerWin = self.turn
 
         return playerWin  # returns true if player won, false if computer won
+
+    def filterArray(self,arrship):
+        print("hi")
+
 
     def swapBoards(self, currentBottom, currentTop):
         # Set current top grid to display in bottom

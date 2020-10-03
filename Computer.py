@@ -13,6 +13,17 @@ class Computer:
         """
         self.__board__ = Board()
         self.difficulty = difficulty 
+
+    def getDifficulty(self):
+        """        
+        Get difficulty Method 
+        Parameters: n/a
+        Returns: n/a
+        Preconditions: n/a
+        Postconditions: Returns the String diffculty 
+        """
+        return (self.difficulty)
+
     def getBoard(self):
         """
         Get Board Method
@@ -64,10 +75,17 @@ class Computer:
         # generate random x,y coordinates
         # attack those coords, if possible
         if(self.difficulty == "Hard"):
-            col = random.randint(0,8)
-            row = random.randint(0,8)
-            print(arrship)
-            return([row, col])
+            #print("Inside Computer.py = " , arrship)
+            if (len(arrship) != 0):
+                col = arrship[0][0][1]
+                row = arrship[0][0][0]
+                print("col" , col)
+                print("row" , row)
+                arrship[0][0].pop(0)
+                arrship[0][0].pop(0)
+                return([row, col])
+            else: 
+                print("Nothing left")
         elif(self.difficulty == "Medium"):
             col = random.randint(0,8)
             row = random.randint(0,8)
