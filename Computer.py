@@ -20,14 +20,15 @@ class Computer:
         self.direction = "up"
         self.directionTranslation = {
             "up": "left", "left": "down", "down": "right", "right": "up"}
+        self.goodDirection = False
 
     def getDifficulty(self):
-        """        
-        Get difficulty Method 
+        """
+        Get difficulty Method
         Parameters: n/a
         Returns: n/a
         Preconditions: n/a
-        Postconditions: Returns the String diffculty 
+        Postconditions: Returns the String diffculty
         """
         return (self.difficulty)
 
@@ -81,7 +82,7 @@ class Computer:
         """
         return(self.__board__.attackTile(xCoord, yCoord))
 
-    def shipGuess(self, arrship, counter):
+    def shipGuess(self, arrship, attackTileFn):
         """
         Ship Guess Method
         Parameters: n/a
@@ -92,7 +93,7 @@ class Computer:
         # generate random x,y coordinates
         # attack those coords, if possible
         if(self.difficulty == "Hard"):
-            #print("Inside Computer.py = " , arrship)
+            # print("Inside Computer.py = " , arrship)
             if (len(arrship) != 0):
                 col = arrship[0][0][1]
                 row = arrship[0][0][0]
@@ -100,35 +101,56 @@ class Computer:
                 print("row", row)
                 arrship[0][0].pop(0)
                 arrship[0][0].pop(0)
-                return([row, col])
+                return([row, col, attackTileFn(row, col)])
             else:
                 print("Nothing left")
         elif(self.difficulty == "Medium"):
             col = random.randint(0, 8)
             row = random.randint(0, 8)
             validCoord = False
+            newTile = True
+            directionsHit = 0
+            counter = 1
             if (self.hit):
                 print("Hit Coord: ", self.hitCoord)
-                while (not validCoord):
-                    self.direction = self.directionTranslation[self.direction]
+                while (not validCoord or not newTile):
+                    if (directionsHit == 4):
+                        directionsHit = 0
+                        counter += 1
+                    if (not self.goodDirection):
+                        self.direction = self.directionTranslation[self.direction]
                     if (self.direction == "up"):
-                        col = self.hitCoord[1] + 1
+                        col = self.hitCoord[1] + counter
                         row = self.hitCoord[0]
+                        directionsHit += 1
                     if (self.direction == "down"):
-                        col = self.hitCoord[1] - 1
+                        col = self.hitCoord[1] - counter
                         row = self.hitCoord[0]
+                        directionsHit += 1
                     if (self.direction == "right"):
-                        row = self.hitCoord[0] + 1
+                        row = self.hitCoord[0] + counter
                         col = self.hitCoord[1]
+                        directionsHit += 1
                     if (self.direction == "left"):
-                        row = self.hitCoord[0] - 1
+                        row = self.hitCoord[0] - counter
                         col = self.hitCoord[1]
+                        directionsHit += 1
                     if (row in range(0, 9) and col in range(0, 9)):
                         validCoord = True
+                        newTile = attackTileFn(row, col)
+                        if (newTile):
+                            self.goodDirection = True
+                        else:
+                            self.goodDirection = False
+                        print("New Tile Accepted")
+                    else:
+                        self.goodDirection = False
                 print("New Coord: ", [row, col])
+            else:
+                newTile = attackTileFn(row, col)
 
-            return([row, col])
+            return([row, col, newTile])
         elif(self.difficulty == "Easy"):  # Is already completed
             col = random.randint(0, 8)
             row = random.randint(0, 8)
-            return([row, col])
+            return([row, col, attackTileFn(row, col)])
