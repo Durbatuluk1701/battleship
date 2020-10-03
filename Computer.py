@@ -12,7 +12,11 @@ class Computer:
         Postconditions: A Computer object is created with a default Board object within it.
         """
         self.__board__ = Board()
-        self.difficulty = difficulty 
+        self.difficulty = difficulty
+        self.hit = False
+        self.hitCoord = [0,0]
+        self.direction = "up"
+        self.directionTranslation = { "up": "left", "left": "down", "down": "right", "right": "up"}
 
     def getDifficulty(self):
         """        
@@ -23,6 +27,13 @@ class Computer:
         Postconditions: Returns the String diffculty 
         """
         return (self.difficulty)
+    
+    def setHit(self, x, y):
+        self.hit = True
+        self.hitCoord = [x, y]
+
+    def unSetHit(self):
+        self.hit = False
 
     def getBoard(self):
         """
@@ -64,7 +75,7 @@ class Computer:
         Postconditions: The Tile of the Board at the specified coordinates is attacked, if possible.
         """
         return(self.__board__.attackTile(xCoord, yCoord))
-    def shipGuess(self,arrship):
+    def shipGuess(self,arrship,counter):
         """
         Ship Guess Method
         Parameters: n/a
@@ -89,6 +100,23 @@ class Computer:
         elif(self.difficulty == "Medium"):
             col = random.randint(0,8)
             row = random.randint(0,8)
+            validCoord = False
+            if (self.hit):
+                self.direction = self.directionTranslation[self.direction]
+                while (not validCoord):
+                    if (self.direction == "up"):
+                        self.hitCoord = [self.hitCoord[0], self.hitCoord[1] + 1]
+                    if (self.direction == "down"):
+                        self.hitCoord = [self.hitCoord[0], self.hitCoord[1] - 1]
+                    if (self.direction == "right"):
+                        self.hitCoord = [self.hitCoord[0] + 1, self.hitCoord[1]]
+                    if (self.direction == "left"):
+                        self.hitCoord = [self.hitCoord[0] - 1, self.hitCoord[1]]
+                    if (self.hitCoord[0] in range(0,9) and self.hitCoord[1] in range(0,9)):
+                        validCoord = True
+                print(self.hitCoord)
+                return (self.hitCoord.copy())
+            
             return([row, col])
         elif(self.difficulty == "Easy"):   #Is already completed 
             col = random.randint(0,8)

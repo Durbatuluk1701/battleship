@@ -261,9 +261,6 @@ class Game:
             self.swapBoards((self.player1Board if player == "Player 1" else self.player2Board),
                             (self.player2Board if player == "Player 1" else self.player1Board))
         
-
-        
-
     def attackPhase(self):
         '''
         attackPhase Method
@@ -341,16 +338,22 @@ class Game:
                         currentFleet, enemyFleet = enemyFleet, currentFleet
                         newTileAttacked = False
                         while(not newTileAttacked):  # ensures that the computer gets a new guess
-                            x, y = self.computer.shipGuess(temp)
+                            x, y = self.computer.shipGuess(temp,0)
+                            #need it to filter array to be usable again
                             if(self.computer.getDifficulty() == "Hard"):
                                 temp[0] = list(filter(None,temp[0]))
                                 temp = list(filter(None,temp))
+                            if(self.computer.getDifficulty() == "Medium"):
+                                    print("after pass back",temp)
                             # attack tile returns false if you have already attacked that tile
                             newTileAttacked = enemyBoard.attackTile(x, y)
                         # if it is a hit damages corresponding ship
                         for ship in range(len(enemyFleet)):
                             if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                 enemyFleet[ship].damageShip()
+                                self.computer.setHit(x, y)
+                                if enemyFleet[ship].isDead():
+                                    self.computer.unSetHit()
                         self.displayGrid(self.botgrid, enemyBoard, True)
                         # Opposite of above
                         self.displayGrid(self.topgrid, currentBoard, False)
@@ -379,7 +382,6 @@ class Game:
 
         return playerWin  # returns true if player won, false if computer won
 
-
     def swapBoards(self, currentBottom, currentTop):
         # Set current top grid to display in bottom
         self.displayGrid(self.botgrid, currentTop, True)
@@ -387,7 +389,7 @@ class Game:
                          False)  # Opposite of above
 
     def showHit(self):
-        playsound("Sounds/hitExplosion.mp3", False)
+        #playsound("Sounds/hitExplosion.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
@@ -416,7 +418,7 @@ class Game:
                             self.fillCoordinates("Player 2", "Player 1")
 
     def showMiss(self):
-        playsound("Sounds/missSplash.mp3", False)
+       # playsound("Sounds/missSplash.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
@@ -445,7 +447,7 @@ class Game:
                             self.fillCoordinates("Player 2", "Player 1")
 
     def sinkShip(self):
-        playsound("Sounds/shipSunk.mp3", False)
+        #playsound("Sounds/shipSunk.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
@@ -716,7 +718,7 @@ class Game:
         pygame.display.flip()
 
 
-playsound("Sounds/metal.mp3", False)
+#playsound("Sounds/metal.mp3", False)
 mygame = Game()
 mygame.game()
 pygame.quit()
