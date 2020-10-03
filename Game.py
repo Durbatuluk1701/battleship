@@ -250,7 +250,8 @@ class Game:
                             fleet += [shipNames[shipPlace]]
                             ArrayofShips.append(shipPositions)
                             print(len(ArrayofShips))
-                            print(ArrayofShips) #Found the Coordinates1!!!!!!!!!!!!!
+                            # Found the Coordinates1!!!!!!!!!!!!!
+                            print(ArrayofShips)
                             shipPositions = []
                             shipPlace += 1
         if (self.numPlayers == 1):
@@ -260,9 +261,6 @@ class Game:
         else:
             self.swapBoards((self.player1Board if player == "Player 1" else self.player2Board),
                             (self.player2Board if player == "Player 1" else self.player1Board))
-        
-
-        
 
     def attackPhase(self):
         '''
@@ -341,16 +339,21 @@ class Game:
                         currentFleet, enemyFleet = enemyFleet, currentFleet
                         newTileAttacked = False
                         while(not newTileAttacked):  # ensures that the computer gets a new guess
-                            x, y = self.computer.shipGuess(temp)
+                            x, y, newTileAttacked = self.computer.shipGuess(
+                                temp, enemyBoard.attackTile)
+                            # need it to filter array to be usable again
                             if(self.computer.getDifficulty() == "Hard"):
-                                temp[0] = list(filter(None,temp[0]))
-                                temp = list(filter(None,temp))
-                            # attack tile returns false if you have already attacked that tile
-                            newTileAttacked = enemyBoard.attackTile(x, y)
+                                temp[0] = list(filter(None, temp[0]))
+                                temp = list(filter(None, temp))
                         # if it is a hit damages corresponding ship
                         for ship in range(len(enemyFleet)):
                             if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                 enemyFleet[ship].damageShip()
+                                print("Hitting at ", x, y)
+                                self.computer.setHit(x, y)
+                                if enemyFleet[ship].isDead():
+                                    print("Computer Sunk Ship")
+                                    self.computer.unSetHit()
                         self.displayGrid(self.botgrid, enemyBoard, True)
                         # Opposite of above
                         self.displayGrid(self.topgrid, currentBoard, False)
@@ -378,7 +381,6 @@ class Game:
                 playerWin = self.turn
 
         return playerWin  # returns true if player won, false if computer won
-
 
     def swapBoards(self, currentBottom, currentTop):
         # Set current top grid to display in bottom
