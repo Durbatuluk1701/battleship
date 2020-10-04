@@ -3,15 +3,18 @@ from Board import Board
 from Ship import Ship
 from Tile import Tile
 
+# Computer Class
+# Purpose: Controls the Interactions of the AI with the Game, only created if Single Player Mode
+
 
 class Computer:
     def __init__(self, difficulty):
         """
         Default Constructor
-        Parameters: n/a
+        Parameters: difficulty (The difficulty of the AI ["easy", "medium", "hard"])
         Returns: n/a
         Preconditions: n/a
-        Postconditions: A Computer object is created with a default Board object within it.
+        Postconditions: A Computer object is created with default board, difficulty set, and default direction and medium ai control variables
         """
         self.__board__ = Board()
         self.difficulty = difficulty
@@ -25,27 +28,41 @@ class Computer:
 
     def getDifficulty(self):
         """
-        Get difficulty Method
+        getDifficulty Method
         Parameters: n/a
-        Returns: n/a
+        Returns: AI Difficulty as a string
         Preconditions: n/a
         Postconditions: Returns the String diffculty
         """
         return (self.difficulty)
 
     def setHit(self, x, y):
+        '''
+        setHit Method
+        Parameters: x (x-coordinate of hit), y (y-coordinate of hit)
+        Returns: NA
+        Preconditions: Game has started, Medium AI selected single player mode, Computer has hit enemy board
+        Postconditions: Medium AI hit, hitCoord, and origHit are updates according to params
+        '''
         if (not self.hit):
             self.origHit = [x, y]
         self.hit = True
         self.hitCoord = [x, y]
 
     def unSetHit(self):
+        '''
+        unSetHit Method
+        Parameters: NA
+        Returns: NA
+        Preconditions: Same as setHit, + AI has sunk enemy ship
+        Postconditions: Medium AI control variables are reset, and origHit is set back to [0,0]
+        '''
         self.hit = False
         self.origHit = [0, 0]
 
     def getBoard(self):
         """
-        Get Board Method
+        getBoard Method
         Parameters: n/a
         Returns: The Board object of the Computer.
         Preconditions: The Board of the Computer is created.
@@ -55,7 +72,7 @@ class Computer:
 
     def shipPlace(self, ship):
         """
-        Ship Place Method
+        shipPlace Method
         Parameters: A Ship object is passed in to the method.
         Returns: n/a
         Preconditions: A Board object is created and valid Ship object is passed in.
@@ -78,7 +95,7 @@ class Computer:
 
     def attackTile(self, xCoord, yCoord):
         """
-        Attack Tile Method
+        attackTile Method
         Parameters: An x coordinate and a y coordinate (both ints) for the Board.
         Returns: True if the Tile has been attacked before, False otherwise.
         Preconditions: A Board object is created and valid coordinates are passed in.
@@ -88,11 +105,11 @@ class Computer:
 
     def shipGuess(self, arrship, attackTileFn):
         """
-        Ship Guess Method
-        Parameters: n/a
-        Returns: n/a
-        Preconditions: A Board object is created.
-        Postconditions: The Computer attacks the Tile at the randomly generated coordinates.
+        shipGuess Method
+        Parameters: arrship (array of ships for hard ai), attackTileFn (function on enemy board to ensure no duplicate tiles hit)
+        Returns: [x coordiate of attack, y coordinate of attack, True||False for whether unique tile is hit]
+        Preconditions: A Board object is created, AI Difficulty has been selected and set in constructor
+        Postconditions: The Computer returns coordinates of where it will be attacking, and the enemyBoard reflects changes where computer has attacked
         """
         # generate random x,y coordinates
         # attack those coords, if possible
@@ -110,7 +127,9 @@ class Computer:
             newTile = True
             directionsHit = 0
             if (self.hit):
+                # While the coordinates are not valid (within game bounds) and tile is not unique, repeatedly guess
                 while (not validCoord or not newTile):
+                    # if every direction guessed, restart at original hit and turn around
                     if (directionsHit == 4):
                         self.hitCoord = self.origHit
                         self.direction = self.directionTranslation[self.direction]
