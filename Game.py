@@ -249,9 +249,7 @@ class Game:
                             fleet = self.player1Fleet if player == "Player 1" else self.player2Fleet
                             fleet += [shipNames[shipPlace]]
                             ArrayofShips.append(shipPositions)
-                            print(len(ArrayofShips))
                             # Found the Coordinates1!!!!!!!!!!!!!
-                            print(ArrayofShips)
                             shipPositions = []
                             shipPlace += 1
         if (self.numPlayers == 1):
@@ -349,10 +347,8 @@ class Game:
                         for ship in range(len(enemyFleet)):
                             if enemyBoard.getTile(x, y).getTileItem() == enemyFleet[ship].getName():
                                 enemyFleet[ship].damageShip()
-                                print("Hitting at ", x, y)
                                 self.computer.setHit(x, y)
                                 if enemyFleet[ship].isDead():
-                                    print("Computer Sunk Ship")
                                     self.computer.unSetHit()
                         self.displayGrid(self.botgrid, enemyBoard, True)
                         # Opposite of above
@@ -423,7 +419,7 @@ class Game:
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
 
-        hittext = hitfont.render("MISS", False, (255, 0, 0))
+        hittext = hitfont.render("MISS", False, (0, 0, 255))
         self.screen.blit(hittext, (int(self.SCREEN_WIDTH/2) -
                                    65, int(self.SCREEN_HEIGHT/2) - 75))
         lowertext = titlefont.render(
@@ -622,6 +618,8 @@ class Game:
                 "Player 1 Board", "Player 2 Board")  # sets the UI
             # places ships for player 2
             self.placeShipPhase("Player 2", self.numShips)
+            self.fillCoordinates("Player 2 Board", "Player 1 Board")
+            self.swapBoards(self.player2Board, self.player1Board)
             playerWin = self.attackPhase()
         else:
             toptext = pygame.font.Font('freesansbold.ttf', 20).render(
