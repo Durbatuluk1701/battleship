@@ -28,7 +28,7 @@ class Game:
         Parameters: N/A
         Returns: N/A
         Preconditions: N/A
-        Postconditions: Creates a valid screen, computer, player board, fleet for both computer and player
+        Postconditions: Creates a valid screen for game, and starts player turn at NULL
         '''
         #*****Initializes screen*****#
         self.emptyBoard = Board()
@@ -57,7 +57,7 @@ class Game:
         Parameters: event
         Returns: N/A
         Preconditions: N/A
-        Postconditions: asuming event is exit, quits the game
+        Postconditions: assuming event is exit, quits the game
         '''
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -173,9 +173,9 @@ class Game:
     def placeShipPhase(self, player, numShips):
         '''
         placeShipPhase Method
-        Parameters: numShips (the number of ships you want the player to place)
+        Parameters: player (player placing ships), numShips (the number of ships you want the player to place)
         Returns: N/A
-        Preconditions: valid player and computer grid
+        Preconditions: Game started and 2 valid boards exist on self
         Postconditions: both players' boards have placed ships, players' fleets have been updated to contain the ships they placed
         '''
         shipNames = [Ship("dinghy", 1), Ship("gunboat", 2), Ship(
@@ -264,8 +264,8 @@ class Game:
         '''
         attackPhase Method
         Parameters: N/A
-        Returns: playerWin (true if player wins, false if computer wins)
-        Preconditions: valid player and computer grid and fleet with placed ships
+        Returns: playerWin (Name of the winning player ["Player 1", "Player 2", "Computer"])
+        Preconditions: 2 valid boards and fleets exist on self, ships placed on board
         Postconditions: players take turns attacking until all the ships of one board are sunk, then exits
         '''
         temp = ArrayofShips
@@ -355,7 +355,7 @@ class Game:
                         self.displayGrid(self.topgrid, currentBoard, False)
                         self.turn = "Computer"
                     else:
-                        self.swapTitles(hit)
+                        self.swapTitles()
                         self.swapBoards(currentBoard, enemyBoard)
                         self.turn = "Player 2" if self.turn == "Player 1" else "Player 1"
                     currentBoard, enemyBoard = enemyBoard, currentBoard
@@ -379,12 +379,28 @@ class Game:
         return playerWin  # returns true if player won, false if computer won
 
     def swapBoards(self, currentBottom, currentTop):
+        # Params are BOARDS, not GRIDS!
+        '''
+        swapBoards Method
+        Parameters: currentBottom (Board on the bottom of screen), currentTop (Board on top of screen)
+        Returns: N/A
+        Preconditions: Game starts, display filled, boards exist with grid and filled
+        Postconditions: Top Grid becomes active grid on Bottom, Bottom grid becomes inactive on top
+        '''
         # Set current top grid to display in bottom
         self.displayGrid(self.botgrid, currentTop, True)
         self.displayGrid(self.topgrid, currentBottom,
                          False)  # Opposite of above
 
     def showHit(self):
+        '''
+        showHit Method
+        Parameters: N/A
+        Returns: N/A
+        Preconditions: In attack phase, player attack has happened, Hit has occured
+        Postconditions: Screen displays that Hit occured, awaits user input "enter" to resume gameplay, plays hit sound
+        '''
+        # Hit sound played async
         playsound("Sounds/hitExplosion.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
@@ -414,6 +430,14 @@ class Game:
                             self.fillCoordinates("Player 2", "Player 1")
 
     def showMiss(self):
+        '''
+        showMiss Method
+        Parameters: N/A
+        Returns: N/A
+        Preconditions: In attack phase, player attack has happened, Miss has occured
+        Postconditions: Screen displays that Miss occured, awaits user input "enter" to resume gameplay, plays Miss sound
+        '''
+        # Plays Miss sound effect async
         playsound("Sounds/missSplash.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
@@ -443,6 +467,14 @@ class Game:
                             self.fillCoordinates("Player 2", "Player 1")
 
     def sinkShip(self):
+        '''
+        sinkShip Method
+        Parameters: N/A
+        Returns: N/A
+        Preconditions: In attack phase, player attack has happened, Hit has occured and Hit sinks a enemy ship
+        Postconditions: Screen displays that Ship sunk, awaits user input "enter" to resume gameplay, plays sinking ship sound
+        '''
+        # Plays Sinking Ship sound effect async
         playsound("Sounds/shipSunk.mp3", False)
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         hitfont = pygame.font.Font('freesansbold.ttf', 50)
@@ -471,9 +503,15 @@ class Game:
                         else:
                             self.fillCoordinates("Player 2", "Player 1")
 
-    def swapTitles(self, hit):
+    def swapTitles(self):
+        '''
+        swapTitles Method
+        Parameters: N/A
+        Returns: N/A
+        Preconditions: In attack phase, player attack has ended, turns are being swapped
+        Postconditions: Screen displays Player Swap message, awaits user input "enter" to resume gameplay
+        '''
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
-        hitfont = pygame.font.Font('freesansbold.ttf', 50)
         self.screen.fill(black)
 
         if self.turn == "Player 1":
@@ -508,6 +546,13 @@ class Game:
                             self.fillCoordinates("Player 2", "Player 1")
 
     def selectPlayers(self):
+        '''
+        selectPlayers Method
+        Parameters: N/A
+        Returns: numberPlayers (Number of players playing the game)
+        Preconditions: Game has started
+        Postconditions: Screen prompts for # of players [1,2] and awaits enter to confirm selection
+        '''
         getNumberPlayers = False
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
         numberPlayers = 0
@@ -536,6 +581,13 @@ class Game:
             pygame.display.flip()
 
     def chooseAIDifficulty(self):
+        '''
+        chooseAIDifficulty Method
+        Parameters: N/A
+        Returns: aiDifficulty (The Difficulty of the AI ["Easy", "Medium", "Hard"])
+        Preconditions: Game has started, Player has selected single player mode
+        Postconditions: Screen prompts for AI Difficulty and awaits enter to confirm selection
+        '''
         self.screen.fill(black)
         getAIDifficulty = False
         titlefont = pygame.font.Font('freesansbold.ttf', 20)
@@ -574,7 +626,7 @@ class Game:
         Parameters: N/A
         Returns: N/A
         Preconditions: Valid screen created (created in constructor)
-        Postconditions: Plays battleship until one person wins then waits to exit
+        Postconditions: Plays battleship and awaits for the gameOver scenario to have occured then exits
         '''
         #*****Member Variables of game*****#
         self.player1Board = Board()
@@ -716,8 +768,11 @@ class Game:
         pygame.display.flip()
 
 
+# Background Music
 playsound("Sounds/metal.mp3", False)
+# Constructing Game and Screen for Display
 mygame = Game()
+# Launching Game
 mygame.game()
 pygame.quit()
 sys.exit()
