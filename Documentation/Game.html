@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>Game</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cliamc%5Ccode%5Ceecs448%5Cbattleship%5Cgame.py">c:\users\liamc\code\eecs448\battleship\game.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/isaac/demo/battleship/Game.py">/home/isaac/demo/battleship/Game.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -51,25 +51,25 @@
 Parameters:&nbsp;N/A<br>
 Returns:&nbsp;N/A<br>
 Preconditions:&nbsp;N/A<br>
-Postconditions:&nbsp;Creates&nbsp;a&nbsp;valid&nbsp;screen,&nbsp;computer,&nbsp;player&nbsp;board,&nbsp;fleet&nbsp;for&nbsp;both&nbsp;computer&nbsp;and&nbsp;player</tt></dd></dl>
+Postconditions:&nbsp;Creates&nbsp;a&nbsp;valid&nbsp;screen&nbsp;for&nbsp;game,&nbsp;and&nbsp;starts&nbsp;player&nbsp;turn&nbsp;at&nbsp;NULL</tt></dd></dl>
 
 <dl><dt><a name="Game-attackPhase"><strong>attackPhase</strong></a>(self)</dt><dd><tt>attackPhase&nbsp;Method<br>
 Parameters:&nbsp;N/A<br>
-Returns:&nbsp;playerWin&nbsp;(true&nbsp;if&nbsp;player&nbsp;wins,&nbsp;false&nbsp;if&nbsp;computer&nbsp;wins)<br>
-Preconditions:&nbsp;valid&nbsp;player&nbsp;and&nbsp;computer&nbsp;grid&nbsp;and&nbsp;fleet&nbsp;with&nbsp;placed&nbsp;ships<br>
+Returns:&nbsp;playerWin&nbsp;(Name&nbsp;of&nbsp;the&nbsp;winning&nbsp;player&nbsp;["Player&nbsp;1",&nbsp;"Player&nbsp;2",&nbsp;"Computer"])<br>
+Preconditions:&nbsp;2&nbsp;valid&nbsp;boards&nbsp;and&nbsp;fleets&nbsp;exist&nbsp;on&nbsp;self,&nbsp;ships&nbsp;placed&nbsp;on&nbsp;board<br>
 Postconditions:&nbsp;players&nbsp;take&nbsp;turns&nbsp;attacking&nbsp;until&nbsp;all&nbsp;the&nbsp;ships&nbsp;of&nbsp;one&nbsp;board&nbsp;are&nbsp;sunk,&nbsp;then&nbsp;exits</tt></dd></dl>
-
-<dl><dt><a name="Game-banger"><strong>banger</strong></a>(self)</dt><dd><tt>banger&nbsp;Method<br>
-Parameters:&nbsp;N/A<br>
-Returns:&nbsp;N/A<br>
-Preconditions:&nbsp;N/A<br>
-Postconditions:&nbsp;plays&nbsp;banger&nbsp;music</tt></dd></dl>
 
 <dl><dt><a name="Game-checkQuit"><strong>checkQuit</strong></a>(self, event)</dt><dd><tt>checkQuit&nbsp;Method<br>
 Parameters:&nbsp;event<br>
 Returns:&nbsp;N/A<br>
 Preconditions:&nbsp;N/A<br>
-Postconditions:&nbsp;asuming&nbsp;event&nbsp;is&nbsp;exit,&nbsp;quits&nbsp;the&nbsp;game</tt></dd></dl>
+Postconditions:&nbsp;assuming&nbsp;event&nbsp;is&nbsp;exit,&nbsp;quits&nbsp;the&nbsp;game</tt></dd></dl>
+
+<dl><dt><a name="Game-chooseAIDifficulty"><strong>chooseAIDifficulty</strong></a>(self)</dt><dd><tt>chooseAIDifficulty&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;aiDifficulty&nbsp;(The&nbsp;Difficulty&nbsp;of&nbsp;the&nbsp;AI&nbsp;["Easy",&nbsp;"Medium",&nbsp;"Hard"])<br>
+Preconditions:&nbsp;<a href="#Game">Game</a>&nbsp;has&nbsp;started,&nbsp;Player&nbsp;has&nbsp;selected&nbsp;single&nbsp;player&nbsp;mode<br>
+Postconditions:&nbsp;Screen&nbsp;prompts&nbsp;for&nbsp;AI&nbsp;Difficulty&nbsp;and&nbsp;awaits&nbsp;enter&nbsp;to&nbsp;confirm&nbsp;selection</tt></dd></dl>
 
 <dl><dt><a name="Game-chooseNumShips"><strong>chooseNumShips</strong></a>(self)</dt><dd><tt>chooseNumShips&nbsp;Method<br>
 Parameters:&nbsp;N/A<br>
@@ -89,7 +89,7 @@ Returns:&nbsp;N/A<br>
 Preconditions:&nbsp;N/A<br>
 Postconditions:&nbsp;When&nbsp;frame&nbsp;is&nbsp;flipped&nbsp;displays&nbsp;a&nbsp;newly&nbsp;updated&nbsp;board</tt></dd></dl>
 
-<dl><dt><a name="Game-fillCoordinates"><strong>fillCoordinates</strong></a>(self)</dt><dd><tt>fillCoordinates&nbsp;Method<br>
+<dl><dt><a name="Game-fillCoordinates"><strong>fillCoordinates</strong></a>(self, topText, bottomText)</dt><dd><tt>fillCoordinates&nbsp;Method<br>
 Parameters:&nbsp;N/A<br>
 Returns:&nbsp;N/A<br>
 Preconditions:&nbsp;N/A<br>
@@ -99,12 +99,12 @@ Postconditions:&nbsp;outputs&nbsp;GUI&nbsp;for&nbsp;player&nbsp;with&nbsp;row&nb
 Parameters:&nbsp;N/A<br>
 Returns:&nbsp;N/A<br>
 Preconditions:&nbsp;Valid&nbsp;screen&nbsp;created&nbsp;(created&nbsp;in&nbsp;constructor)<br>
-Postconditions:&nbsp;Plays&nbsp;battleship&nbsp;until&nbsp;one&nbsp;person&nbsp;wins&nbsp;then&nbsp;waits&nbsp;to&nbsp;exit</tt></dd></dl>
+Postconditions:&nbsp;Plays&nbsp;battleship&nbsp;and&nbsp;awaits&nbsp;for&nbsp;the&nbsp;gameOver&nbsp;scenario&nbsp;to&nbsp;have&nbsp;occured&nbsp;then&nbsp;exits</tt></dd></dl>
 
-<dl><dt><a name="Game-placeShipPhase"><strong>placeShipPhase</strong></a>(self, numShips)</dt><dd><tt>placeShipPhase&nbsp;Method<br>
-Parameters:&nbsp;numShips&nbsp;(the&nbsp;number&nbsp;of&nbsp;ships&nbsp;you&nbsp;want&nbsp;the&nbsp;player&nbsp;to&nbsp;place)<br>
+<dl><dt><a name="Game-placeShipPhase"><strong>placeShipPhase</strong></a>(self, player, numShips)</dt><dd><tt>placeShipPhase&nbsp;Method<br>
+Parameters:&nbsp;player&nbsp;(player&nbsp;placing&nbsp;ships),&nbsp;numShips&nbsp;(the&nbsp;number&nbsp;of&nbsp;ships&nbsp;you&nbsp;want&nbsp;the&nbsp;player&nbsp;to&nbsp;place)<br>
 Returns:&nbsp;N/A<br>
-Preconditions:&nbsp;valid&nbsp;player&nbsp;and&nbsp;computer&nbsp;grid<br>
+Preconditions:&nbsp;<a href="#Game">Game</a>&nbsp;started&nbsp;and&nbsp;2&nbsp;valid&nbsp;boards&nbsp;exist&nbsp;on&nbsp;self<br>
 Postconditions:&nbsp;both&nbsp;players'&nbsp;boards&nbsp;have&nbsp;placed&nbsp;ships,&nbsp;players'&nbsp;fleets&nbsp;have&nbsp;been&nbsp;updated&nbsp;to&nbsp;contain&nbsp;the&nbsp;ships&nbsp;they&nbsp;placed</tt></dd></dl>
 
 <dl><dt><a name="Game-result"><strong>result</strong></a>(self, winner)</dt><dd><tt>result&nbsp;Method<br>
@@ -118,6 +118,42 @@ Parameters:&nbsp;event,&nbsp;and&nbsp;grid&nbsp;you&nbsp;clicked&nbsp;on<br>
 Returns:&nbsp;origin&nbsp;([x,&nbsp;y],&nbsp;which&nbsp;is&nbsp;the&nbsp;corresponding&nbsp;square&nbsp;you&nbsp;clicked&nbsp;on)<br>
 Preconditions:&nbsp;N/A<br>
 Postconditions:&nbsp;N/A</tt></dd></dl>
+
+<dl><dt><a name="Game-selectPlayers"><strong>selectPlayers</strong></a>(self)</dt><dd><tt>selectPlayers&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;numberPlayers&nbsp;(Number&nbsp;of&nbsp;players&nbsp;playing&nbsp;the&nbsp;game)<br>
+Preconditions:&nbsp;<a href="#Game">Game</a>&nbsp;has&nbsp;started<br>
+Postconditions:&nbsp;Screen&nbsp;prompts&nbsp;for&nbsp;#&nbsp;of&nbsp;players&nbsp;[1,2]&nbsp;and&nbsp;awaits&nbsp;enter&nbsp;to&nbsp;confirm&nbsp;selection</tt></dd></dl>
+
+<dl><dt><a name="Game-showHit"><strong>showHit</strong></a>(self)</dt><dd><tt>showHit&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;N/A<br>
+Preconditions:&nbsp;In&nbsp;attack&nbsp;phase,&nbsp;player&nbsp;attack&nbsp;has&nbsp;happened,&nbsp;Hit&nbsp;has&nbsp;occured<br>
+Postconditions:&nbsp;Screen&nbsp;displays&nbsp;that&nbsp;Hit&nbsp;occured,&nbsp;awaits&nbsp;user&nbsp;input&nbsp;"enter"&nbsp;to&nbsp;resume&nbsp;gameplay,&nbsp;plays&nbsp;hit&nbsp;sound</tt></dd></dl>
+
+<dl><dt><a name="Game-showMiss"><strong>showMiss</strong></a>(self)</dt><dd><tt>showMiss&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;N/A<br>
+Preconditions:&nbsp;In&nbsp;attack&nbsp;phase,&nbsp;player&nbsp;attack&nbsp;has&nbsp;happened,&nbsp;Miss&nbsp;has&nbsp;occured<br>
+Postconditions:&nbsp;Screen&nbsp;displays&nbsp;that&nbsp;Miss&nbsp;occured,&nbsp;awaits&nbsp;user&nbsp;input&nbsp;"enter"&nbsp;to&nbsp;resume&nbsp;gameplay,&nbsp;plays&nbsp;Miss&nbsp;sound</tt></dd></dl>
+
+<dl><dt><a name="Game-sinkShip"><strong>sinkShip</strong></a>(self)</dt><dd><tt>sinkShip&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;N/A<br>
+Preconditions:&nbsp;In&nbsp;attack&nbsp;phase,&nbsp;player&nbsp;attack&nbsp;has&nbsp;happened,&nbsp;Hit&nbsp;has&nbsp;occured&nbsp;and&nbsp;Hit&nbsp;sinks&nbsp;a&nbsp;enemy&nbsp;ship<br>
+Postconditions:&nbsp;Screen&nbsp;displays&nbsp;that&nbsp;Ship&nbsp;sunk,&nbsp;awaits&nbsp;user&nbsp;input&nbsp;"enter"&nbsp;to&nbsp;resume&nbsp;gameplay,&nbsp;plays&nbsp;sinking&nbsp;ship&nbsp;sound</tt></dd></dl>
+
+<dl><dt><a name="Game-swapBoards"><strong>swapBoards</strong></a>(self, currentBottom, currentTop)</dt><dd><tt>swapBoards&nbsp;Method<br>
+Parameters:&nbsp;currentBottom&nbsp;(Board&nbsp;on&nbsp;the&nbsp;bottom&nbsp;of&nbsp;screen),&nbsp;currentTop&nbsp;(Board&nbsp;on&nbsp;top&nbsp;of&nbsp;screen)<br>
+Returns:&nbsp;N/A<br>
+Preconditions:&nbsp;<a href="#Game">Game</a>&nbsp;starts,&nbsp;display&nbsp;filled,&nbsp;boards&nbsp;exist&nbsp;with&nbsp;grid&nbsp;and&nbsp;filled<br>
+Postconditions:&nbsp;Top&nbsp;Grid&nbsp;becomes&nbsp;active&nbsp;grid&nbsp;on&nbsp;Bottom,&nbsp;Bottom&nbsp;grid&nbsp;becomes&nbsp;inactive&nbsp;on&nbsp;top</tt></dd></dl>
+
+<dl><dt><a name="Game-swapTitles"><strong>swapTitles</strong></a>(self)</dt><dd><tt>swapTitles&nbsp;Method<br>
+Parameters:&nbsp;N/A<br>
+Returns:&nbsp;N/A<br>
+Preconditions:&nbsp;In&nbsp;attack&nbsp;phase,&nbsp;player&nbsp;attack&nbsp;has&nbsp;ended,&nbsp;turns&nbsp;are&nbsp;being&nbsp;swapped<br>
+Postconditions:&nbsp;Screen&nbsp;displays&nbsp;Player&nbsp;Swap&nbsp;message,&nbsp;awaits&nbsp;user&nbsp;input&nbsp;"enter"&nbsp;to&nbsp;resume&nbsp;gameplay</tt></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -134,7 +170,8 @@ Data descriptors defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>black</strong> = (0, 0, 0)<br>
+<td width="100%"><strong>ArrayofShips</strong> = []<br>
+<strong>black</strong> = (0, 0, 0)<br>
 <strong>blue</strong> = (52, 196, 206)<br>
 <strong>grey</strong> = (161, 139, 117)<br>
 <strong>red</strong> = (255, 14, 14)<br>
